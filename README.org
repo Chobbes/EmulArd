@@ -1,0 +1,10 @@
+#+TITLE: EmulArd README
+#+AUTHOR: Calvin Beck
+#+OPTIONS: ^:{}
+
+* Introduction
+  EmulArd is an Arduino testing framework based on providing a fake
+  Arduino.h with common Arduino functions.
+
+  This framework will also allow for creating networks of fake
+  Arduinos.
