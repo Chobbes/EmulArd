@@ -9,6 +9,9 @@
   stdout in order to set pin values and talk over serial to a virtual
   Arduino.
 ** Protocol
+   We assume that everything is running on the same computer, so
+   endianness, and integer sizes should not be different between the
+   server and clients.
 *** Serial
 **** Serial Begin
      Pretend that we are initializing the serial port to a certain baud
