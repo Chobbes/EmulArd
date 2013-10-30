@@ -29,7 +29,49 @@ b/* Copyright (C) 2013 Calvin Beck
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
+#include <string.h>
 
+
+/*
+  Fake serial methods.
+ */
+
+void FakeSerial::begin(unsigned long speed) {
+    /* Send the SERIAL_BEGIN command identifier */
+    ARDUINO_COMMAND(SERIAL_BEGIN);
+
+    /* Send port and baud rate arguments */
+    ARDUINO_SEND(this->port_number);
+    ARDUINO_SEND(speed);
+}
+
+
+size_t FakeSerial::write(uint8_t value) {
+    /* SERIAL_WRITE command */
+    ARDUINO_COMMAND(SERIAL_WRITE);
+
+    /* Port number and value for arguments */
+    ARDUINO_SEND(this->port_number);
+    ARDUINO_SEND(value);
+
+    return 1;
+}
+
+
+size_t FakeSerial::write(const char *str) {
+    size_t length = strlen(str);
+
+    return this->write(str, length);
+}
+
+
+size_t FakeSerial::write(const uint8_t *buffer, size_t length) {
+    for (int i = 0; i < length; ++i) {
+        this->write(buffer[i]);
+    }
+
+    return length;
+}
 
 /*
   Implementation of the Arduino functions.
