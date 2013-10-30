@@ -43,6 +43,6 @@ const uint8_t DIGITAL_WRITE = 5;
 const uint8_t DIGITAL_READ = 6;
 const uint8_t ANALOG_WRITE = 7;
 const uint8_t ANALOG_READ = 8;
-const uint8_t PINMOD = 9;
+const uint8_t PINMODE = 9;
 
 #endif
