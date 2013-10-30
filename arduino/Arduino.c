@@ -28,6 +28,7 @@ b/* Copyright (C) 2013 Calvin Beck
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <time.h>
 
 /*
   Implementation of the Arduino functions.
@@ -152,4 +153,14 @@ long random(long min, long max) {
 
 void delay(unsigned long milliseconds) {
     usleep(milliseconds * 1000);
+}
+
+
+unsigned long micros() {
+    return (clock() / CLOCKS_PER_SEC) * 1000000;
+}
+
+
+unsigned long millis() {
+    return (clock() / CLOCKS_PER_SEC) * 1000;
 }
