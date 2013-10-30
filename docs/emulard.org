@@ -1,0 +1,15 @@
+#+TITLE: EmulArd Documentation
+#+AUTHOR: Calvin Beck
+#+OPTIONS: ^:{}
+
+* Arduino Program Clients
+  Each Arduino program acts as a client to a server which actually
+  pretends to be an Arduino. The program written for the Arduino
+  actually communicates with the server via a protocol over stdin and
+  stdout in order to set pin values and talk over serial to a virtual
+  Arduino.
+** Protocol
+*** Serial Begin
+    : SERIAL_BEGIN <unsigned long>
+
+    No response.
