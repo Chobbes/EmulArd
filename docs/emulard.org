@@ -9,7 +9,45 @@
   stdout in order to set pin values and talk over serial to a virtual
   Arduino.
 ** Protocol
-*** Serial Begin
-    : SERIAL_BEGIN <unsigned long>
+*** Serial
+**** Serial Begin
+     Pretend that we are initializing the serial port to a certain baud
+     rate.
 
-    No response.
+     : SERIAL_BEGIN <PORT_NUMBER> <BAUD_RATE>
+
+     Arguments:
+     - PORT_NUMBER: unsigned int for the serial port (Serial, Serial1, e.t.c.)
+     - BAUD_RATE: unsigned long for the baud rate of the serial port.
+     
+     No response from the server.
+**** Serial Write
+     Send a single character over serial port.
+
+     : SERIAL_WRITE <PORT_NUMBER> <char>
+
+     Arguments:
+     - PORT_NUMBER: unsigned int for the serial port (Serial, Serial1, e.t.c.)
+     - char: just a regular C character.
+
+     No response from the server.
+**** Serial Read
+     Read a single character from the serial port.
+
+     : SERIAL_READ <PORT_NUMBER>
+
+     Arguments:
+     - PORT_NUMBER: unsigned int for the serial port (Serial, Serial1, e.t.c.)
+
+     Returns a single character representing the character read from
+     the serial port. This may be -1 if there were no characters
+     available on the serial port.
+**** Serial Available
+     Check how many characters are available on the serial port.
+
+     : SERIAL_AVAILABLE <PORT_NUMBER>
+
+     Arguments:
+     - PORT_NUMBER: unsigned int for the serial port (Serial, Serial1, e.t.c.)
+
+     Returns an int for the number of characters waiting on the serial port.
