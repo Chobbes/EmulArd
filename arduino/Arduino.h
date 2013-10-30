@@ -38,7 +38,7 @@ const uint8_t OUTPUT = 1;
 const uint8_t INPUT_PULLUP = 2;
 
 /* Useless pinMode function! */
-void pinMode(uint8_t, uint8_t);
+void pinMode(uint8_t pin, uint8_t mode);
 
 /* Digital read and write functions */
 int digitalRead(uint8_t pin);
