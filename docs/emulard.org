@@ -98,9 +98,10 @@
 *** Pin Mode
     Set a pin's mode.
 
-    : PINMODE <MODE>
+    : PINMODE <PIN_NUMBER> <MODE>
 
     Arguments:
+    - PIN_NUMBER: uint8_t for the digital pin number.
     - MODE: A uint8_t for the mode. Should be INPUT, OUTPUT, or INPUT_PULLUP.
 
     No response from the server.
