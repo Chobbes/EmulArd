@@ -53,22 +53,20 @@ int digitalRead(uint8_t pin) {
 
     /* Receive the integer result */
     int total_read = 0;
-    int our_int = 0;
+    int value = 0;
+    char *int_buff = (char *) &value;
 
-    while (total_read < sizeof(our_int)) {
+    while (total_read < sizeof(value)) {
         char int_part;
-        ssize_t bytes_read = read(STDIN_FILENO, &int_part, sizeof(int_part));
+        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_part) - total_read);
 
-        if (1 == bytes_read) {
-            /* Stuff the byte we read into our integer */
-            our_int << sizeof(int_part);
-            our_int |= int_part;
-
-            total_read++;
+        if (bytes_read > 0) {
+            int_buff += bytes_read;
+            total_read += bytes_read;
         }
     }
 
-    return our_int;
+    return value;
 }
 
 
@@ -77,16 +75,7 @@ void digitalWrite(uint8_t pin, int value) {
     write(STDOUT_FILENO, &DIGITAL_WRITE, sizeof(DIGITAL_WRITE));
 
     /* Write our integer */
-    int shift_amount = (sizeof(value) - sizeof(int_part));
-
-    while (total_sent < sizeof(value)) {
-        char int_part = value >> shift_amount;
-
-        write(STDOUT_FILENO, &int_part, sizeof(int_part));
-
-        shift_amount -= sizeof(int_part);
-        total_sent++;
-    }
+    write(STDOUT_FILENO, &value, sizeof(value));
 }
 
 
@@ -99,40 +88,29 @@ int analogRead(uint8_t pin) {
 
     /* Receive the integer result */
     int total_read = 0;
-    int our_int = 0;
+    int value = 0;
+    char *int_buff = (char *) &value;
 
-    while (total_read < sizeof(our_int)) {
+    while (total_read < sizeof(value)) {
         char int_part;
-        ssize_t bytes_read = read(STDIN_FILENO, &int_part, sizeof(int_part));
+        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_part) - total_read);
 
-        if (1 == bytes_read) {
-            /* Stuff the byte we read into our integer */
-            our_int << sizeof(int_part);
-            our_int |= int_part;
-
-            total_read++;
+        if (bytes_read > 0) {
+            int_buff += bytes_read;
+            total_read += bytes_read;
         }
     }
 
-    return our_int;
+    return value;
 }
 
 
 void analogWrite(uint8_t pin, int value) {
-    /* Send DIGITAL_WRITE command */
-    write(STDOUT_FILENO, &DIGITAL_WRITE, sizeof(DIGITAL_WRITE));
+    /* Send ANALOG_WRITE command */
+    write(STDOUT_FILENO, &ANALOG_WRITE, sizeof(ANALOG_WRITE));
 
     /* Write our integer */
-    int shift_amount = (sizeof(value) - sizeof(int_part));
-
-    while (total_sent < sizeof(value)) {
-        char int_part = value >> shift_amount;
-
-        write(STDOUT_FILENO, &int_part, sizeof(int_part));
-
-        shift_amount -= sizeof(int_part);
-        total_sent++;
-    }
+    write(STDOUT_FILENO, &value, sizeof(value));
 }
 
 
