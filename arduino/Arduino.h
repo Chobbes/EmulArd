@@ -28,6 +28,23 @@
 #include <stdint.h>
 
 
+class FakeSerial {
+ private:
+    unsigned int port_number;
+ public:
+    FakeSerial(unsigned int port_number) {
+        this->port_number = port_number;
+    }
+
+    void begin(unsigned long speed);
+
+    size_t write(uint8_t value);
+    size_t write(const char *str);
+    size_t write(const uint8_t *buffer, size_t length);
+};
+
+FakeSerial Serial(0), Serial1(1), Serial2(2), Serial3(3);
+
 /* Values for pin reads and writes */
 const int HIGH = 1;
 const int LOW = 0;
