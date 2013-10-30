@@ -51,3 +51,53 @@
      - PORT_NUMBER: unsigned int for the serial port (Serial, Serial1, e.t.c.)
 
      Returns an int for the number of characters waiting on the serial port.
+*** Digital Pins
+**** Digital Write
+     Write to a digital pin.
+
+     : DIGITAL_WRITE <PIN_NUMBER> <VALUE>
+
+     Arguments:
+     - PIN_NUMBER: uint8_t for the digital pin number.
+     - VALUE: int to write to the digital pin. Should be HIGH or LOW.
+
+     No response from the server.
+**** Digital Read
+     Read a value from a digital pin.
+
+     : DIGITAL_READ <PIN_NUMBER>
+
+     Arguments:
+     - PIN_NUMBER: uint8_t for the digital pin number.
+
+     Returns an int for the value of the pin.
+
+*** Analog Pins
+**** Analog Write
+     Write to an analog pin.
+
+     : ANALOG_WRITE <PIN_NUMBER> <VALUE>
+
+     Arguments:
+     - PIN_NUMBER: uint8_t for the analog pin number.
+     - VALUE: int value to write to the pin.
+
+     No response from the server.
+**** Analog Read
+     Read a value from an analog pin.
+
+     : DIGITAL_READ <PIN_NUMBER>
+
+     Arguments:
+     - PIN_NUMBER: uint8_t for the analog pin number.
+
+     Returns an int for the value of the pin.
+*** Pin Mode
+    Set a pin's mode.
+
+    : PINMODE <MODE>
+
+    Arguments:
+    - MODE: A uint8_t for the mode. Should be INPUT, OUTPUT, or INPUT_PULLUP.
+
+    No response from the server.
