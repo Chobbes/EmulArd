@@ -49,7 +49,7 @@ int analogRead(uint8_t pin);
 void analogWrite(uint8_t pin, int value);
 
 /* Random functions */
-void randomSeed(unsigned int);
+void randomSeed(unsigned int seed);
 long random(long max);
 long random(long min, long max);
 
