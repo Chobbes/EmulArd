@@ -34,9 +34,9 @@ b/* Copyright (C) 2013 Calvin Beck
 
 void pinMode(uint8_t pin, uint8_t mode) {
     /* Send PINMODE command identifier */
-    write(STDIO_FILENO, &PINMODE, 1);
+    write(STDOUT_FILENO, &PINMODE, sizeof(PINMODE));
 
     /* Send the pin argument, and then the mode */
-    write(STDIO_FILENO, &pin, 1);
-    write(STDIO_FILENO, &mode, 1);
+    write(STDOUT_FILENO, &pin, sizeof(pin));
+    write(STDOUT_FILENO, &mode, sizeof(mode));
 }
