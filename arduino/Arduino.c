@@ -27,6 +27,7 @@ b/* Copyright (C) 2013 Calvin Beck
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 /*
   Implementation of the Arduino functions.
@@ -39,4 +40,32 @@ void pinMode(uint8_t pin, uint8_t mode) {
     /* Send the pin argument, and then the mode */
     write(STDOUT_FILENO, &pin, sizeof(pin));
     write(STDOUT_FILENO, &mode, sizeof(mode));
+}
+
+int digitalRead(uint8_t pin) {
+    /* Send DIGITAL_READ command */
+    write(STDOUT_FILENO, &DIGITAL_READ, sizeof(DIGITAL_READ));
+
+    /* Send the pin number argument */
+    write(STDOUT_FILENO, &pin, sizeof(pin));
+
+    /* Receive the integer result */
+    int total_read = 0;
+    int our_int = 0;
+
+    while (total_read < sizeof(int)) {
+        char int_part;
+
+        ssize_t bytes_read = read(STDIN_FILENO, &int_part, sizeof(char));
+
+        if (1 == bytes_read) {
+            /* Stuff the byte we read into our integer */
+            our_int << sizeof(char);
+            our_int |= int_part;
+
+            total_read++;
+        }
+    }
+
+    return our_int;
 }
