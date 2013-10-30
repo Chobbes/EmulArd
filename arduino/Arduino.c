@@ -148,3 +148,8 @@ long random(long max) {
 long random(long min, long max) {
     return (rand() % (max - min)) + min;
 }
+
+
+void delay(unsigned long milliseconds) {
+    usleep(milliseconds * 1000);
+}
