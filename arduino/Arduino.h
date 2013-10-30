@@ -32,6 +32,11 @@
 const int HIGH = 1;
 const int LOW = 0;
 
+/* Values for pin modes */
+const uint8_t INPUT = 0;
+const uint8_t OUTPUT = 1;
+const uint8_t INPUT_PULLUP = 2;
+
 /* Useless pinMode function! */
 void pinMode(uint8_t, uint8_t);
 
@@ -42,6 +47,11 @@ void digitalWrite(uint8_t pin, int value);
 /* Analog read and write functions */
 int analogRead(uint8_t pin);
 void analogWrite(uint8_t pin, int value);
+
+/* Random functions */
+void randomSeed(unsigned int);
+long random(long max);
+long random(long min, long max);
 
 /* Timing functions */
 void delay(unsigned long milliseconds);
