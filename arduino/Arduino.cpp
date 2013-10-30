@@ -30,26 +30,27 @@ b/* Copyright (C) 2013 Calvin Beck
 #include <stdint.h>
 #include <time.h>
 
+
 /*
   Implementation of the Arduino functions.
  */
 
 void pinMode(uint8_t pin, uint8_t mode) {
     /* Send PINMODE command identifier */
-    write(STDOUT_FILENO, &PINMODE, sizeof(PINMODE));
+    ARDUINO_COMMAND(PINMODE);
 
     /* Send the pin argument, and then the mode */
-    write(STDOUT_FILENO, &pin, sizeof(pin));
-    write(STDOUT_FILENO, &mode, sizeof(mode));
+    ARDUINO_SEND(pin);
+    ARDUINO_SEND(mode);
 }
 
 
 int digitalRead(uint8_t pin) {
     /* Send DIGITAL_READ command */
-    write(STDOUT_FILENO, &DIGITAL_READ, sizeof(DIGITAL_READ));
+    ARDUINO_COMMAND(DIGITAL_READ);
 
     /* Send the pin number argument */
-    write(STDOUT_FILENO, &pin, sizeof(pin));
+    ARDUINO_SEND(pin);
 
     /* Receive the integer result */
     int total_read = 0;
@@ -72,19 +73,19 @@ int digitalRead(uint8_t pin) {
 
 void digitalWrite(uint8_t pin, int value) {
     /* Send DIGITAL_WRITE command */
-    write(STDOUT_FILENO, &DIGITAL_WRITE, sizeof(DIGITAL_WRITE));
+    ARDUINO_COMMAND(DIGITAL_WRITE);
 
     /* Write our integer */
-    write(STDOUT_FILENO, &value, sizeof(value));
+    ARDUINO_SEND(value);
 }
 
 
 int analogRead(uint8_t pin) {
     /* Send ANALOG_READ command */
-    write(STDOUT_FILENO, &ANALOG_READ, sizeof(ANALOG_READ));
+    ARDUINO_COMMAND(ANALOG_READ);
 
     /* Send the pin number argument */
-    write(STDOUT_FILENO, &pin, sizeof(pin));
+    ARDUINO_SEND(PIN);
 
     /* Receive the integer result */
     int total_read = 0;
@@ -107,10 +108,10 @@ int analogRead(uint8_t pin) {
 
 void analogWrite(uint8_t pin, int value) {
     /* Send ANALOG_WRITE command */
-    write(STDOUT_FILENO, &ANALOG_WRITE, sizeof(ANALOG_WRITE));
+    ARDUINO_COMMAND(ANALOG_WRITE);
 
     /* Write our integer */
-    write(STDOUT_FILENO, &value, sizeof(value));
+    ARDUINO_SEND(value);
 }
 
 
