@@ -42,6 +42,7 @@ void pinMode(uint8_t pin, uint8_t mode) {
     write(STDOUT_FILENO, &mode, sizeof(mode));
 }
 
+
 int digitalRead(uint8_t pin) {
     /* Send DIGITAL_READ command */
     write(STDOUT_FILENO, &DIGITAL_READ, sizeof(DIGITAL_READ));
@@ -53,14 +54,13 @@ int digitalRead(uint8_t pin) {
     int total_read = 0;
     int our_int = 0;
 
-    while (total_read < sizeof(int)) {
+    while (total_read < sizeof(our_int)) {
         char int_part;
-
-        ssize_t bytes_read = read(STDIN_FILENO, &int_part, sizeof(char));
+        ssize_t bytes_read = read(STDIN_FILENO, &int_part, sizeof(int_part));
 
         if (1 == bytes_read) {
             /* Stuff the byte we read into our integer */
-            our_int << sizeof(char);
+            our_int << sizeof(int_part);
             our_int |= int_part;
 
             total_read++;
@@ -68,4 +68,22 @@ int digitalRead(uint8_t pin) {
     }
 
     return our_int;
+}
+
+
+void digitalWrite(uint8_t pin, int value) {
+    /* Send DIGITAL_WRITE command */
+    write(STDOUT_FILENO, &DIGITAL_WRITE, sizeof(DIGITAL_WRITE));
+
+    /* Write our integer */
+    int shift_amount = (sizeof(value) - sizeof(int_part));
+
+    while (total_sent < sizeof(value)) {
+        char int_part = value >> shift_amount;
+
+        write(STDOUT_FILENO, &int_part, sizeof(int_part));
+
+        shift_amount -= sizeof(int_part);
+        total_sent++;
+    }
 }
