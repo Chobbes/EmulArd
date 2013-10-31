@@ -42,6 +42,10 @@ class FakeSerial {
     size_t write(uint8_t value);
     size_t write(const char *str);
     size_t write(const uint8_t *buffer, size_t length);
+
+    int read();
+    int peek();
+    int available();
 };
 
 static FakeSerial Serial(0), Serial1(1), Serial2(2), Serial3(3);
