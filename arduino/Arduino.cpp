@@ -74,6 +74,42 @@ size_t FakeSerial::write(const uint8_t *buffer, size_t length) {
 }
 
 
+int FakeSerial::read() {
+    /* Send the read command */
+    ARDUINO_COMMAND(SERIAL_READ);
+
+    /* Argument is the port number */
+    ARDUINO_SEND(port_number);
+
+    /* Return the result */
+    return receive_int(STDIN_FILENO);
+}
+
+
+int FakeSerial::peek() {
+    /* Send the read command */
+    ARDUINO_COMMAND(SERIAL_PEEK);
+
+    /* Argument is the port number */
+    ARDUINO_SEND(port_number);
+
+    /* Return the result */
+    return receive_int(STDIN_FILENO);
+}
+
+
+int FakeSerial::available() {
+    /* Send the read command */
+    ARDUINO_COMMAND(SERIAL_AVAILABLE);
+
+    /* Argument is the port number */
+    ARDUINO_SEND(port_number);
+
+    /* Return the result */
+    return receive_int(STDIN_FILENO);
+}
+
+
 /*
   Implementation of the Arduino functions.
  */
