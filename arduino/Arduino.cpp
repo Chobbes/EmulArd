@@ -96,20 +96,7 @@ int digitalRead(uint8_t pin) {
     ARDUINO_SEND(pin);
 
     /* Receive the integer result */
-    int total_read = 0;
-    int value = 0;
-    char *int_buff = (char *) &value;
-
-    while (total_read < sizeof(value)) {
-        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_buff) - total_read);
-
-        if (bytes_read > 0) {
-            int_buff += bytes_read;
-            total_read += bytes_read;
-        }
-    }
-
-    return value;
+    return receive_int(STDIN_FILENO);
 }
 
 
@@ -129,21 +116,8 @@ int analogRead(uint8_t pin) {
     /* Send the pin number argument */
     ARDUINO_SEND(pin);
 
-    /* Receive the integer result */
-    int total_read = 0;
-    int value = 0;
-    char *int_buff = (char *) &value;
-
-    while (total_read < sizeof(value)) {
-        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_buff) - total_read);
-
-        if (bytes_read > 0) {
-            int_buff += bytes_read;
-            total_read += bytes_read;
-        }
-    }
-
-    return value;
+    /* Receive integer result */
+    return receive_int(STDIN_FILENO);
 }
 
 
