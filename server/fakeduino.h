@@ -96,16 +96,20 @@ class ArduinoMega {
     uint8_t pin_modes[70];
 
     /* Serial buffers for the different ports */
-    SerialBuffer serial_buffer;
+    SerialBuffer serial_out;
+    SerialBuffer serial_in;
     unsigned long serial_baud;
     
-    SerialBuffer serial1_buffer;
+    SerialBuffer serial1_out;
+    SerialBuffer serial1_in;
     unsigned long serial1_baud;
 
-    SerialBuffer serial2_buffer;
+    SerialBuffer serial2_out;
+    SerialBuffer serial2_in;
     unsigned long serial2_baud;
 
-    SerialBuffer serial3_buffer;
+    SerialBuffer serial3_out;
+    SerialBuffer serial3_in;
     unsigned long serial3_baud;
 
     /* Pipes for talking to the Arduino process */
@@ -130,6 +134,15 @@ class ArduinoMega {
                 break;
             case SERIAL_WRITE:
                 this->serial_write();
+                break;
+            case SERIAL_READ:
+                this->serial_read();
+                break;
+            case SERIAL_PEEK:
+                this->serial_peek();
+                break;
+            case SERIAL_AVAILABLE:
+                this->serial_available();
                 break;
             case DIGITAL_WRITE:
                 this->digital_write();
@@ -180,18 +193,84 @@ class ArduinoMega {
 
         switch (port) {
         case 0:
-            serial_buffer.append(value);
+            serial_out.append(value);
             break;
         case 1:
-            serial1_buffer.append(value);
+            serial1_out.append(value);
             break;
         case 2:
-            serial2_buffer.append(value);
+            serial2_out.append(value);
             break;
         case 3:
-            serial3_buffer.append(value);
+            serial3_out.append(value);
             break;
         }
+    }
+
+    void serial_read() {
+        unsigned int port = receive_int(from_arduino);
+        int value = -1;
+
+        switch (port) {
+        case 0:
+            value = serial_in.read();
+            break;
+        case 1:
+            value = serial1_in.read();
+            break;
+        case 2:
+            value = serial2_in.read();
+            break;
+        case 3:
+            value = serial3_in.read();
+            break;
+        }
+
+        FD_SEND(to_arduino, value);
+    }
+
+    void serial_peek() {
+        unsigned int port = receive_int(from_arduino);
+        int value = -1;
+
+        switch (port) {
+        case 0:
+            value = serial_in.peek();
+            break;
+        case 1:
+            value = serial1_in.peek();
+            break;
+        case 2:
+            value = serial2_in.peek();
+            break;
+        case 3:
+            value = serial3_in.peek();
+            break;
+        }
+
+        FD_SEND(to_arduino, value);
+    }
+
+    void serial_available() {
+        unsigned int port = receive_int(from_arduino);
+        int available = -1;
+
+        switch (port) {
+        case 0:
+            available = serial_in.available();
+            break;
+        case 1:
+            available = serial1_in.available();
+            break;
+        case 2:
+            available = serial2_in.available();
+            break;
+        case 3:
+            available = serial3_in.available();
+            break;
+        }
+
+        FD_SEND(to_arduino, available);
     }
 
     void digital_write() {
