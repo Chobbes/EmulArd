@@ -45,6 +45,17 @@
      Returns a single int representing the character read from the
      serial port. This may be -1 if there were no characters available
      on the serial port.
+**** Serial Peek
+     Peek a single byte from the serial port.
+
+     : SERIAL_PEEK <PORT_NUMBER>
+
+     Arguments:
+     - PORT_NUMBER: unsigned int for the serial port (Serial, Serial1, e.t.c.)
+
+     Returns a single int representing the character that would be
+     read from the serial port. This may be -1 if there were no
+     characters available on the serial port.
 **** Serial Available
      Check how many characters are available on the serial port.
 
