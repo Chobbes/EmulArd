@@ -89,9 +89,15 @@ int main(int argc, char *argv[]) {
 
     /* Child process - set up Arduino server */
     ArduinoMega mega(arduino_in[1], arduino_out[0]);
+    int prev_light = 0;
 
     while (1) {
         mega.run();
+
+        if (prev_light != mega.pins[13]) {
+            printf("LIGHT: %d\n", mega.pins[13]);
+            prev_light = mega.pins[13];
+        }
 
         if (mega.serial_buffer.available()) {
             printf("%c", mega.serial_buffer.read());
@@ -104,9 +110,13 @@ int main(int argc, char *argv[]) {
 
 void setup() {
     Serial.begin(9600);
+    pinMode(13, OUTPUT);
 }
 
 void loop() {
+    digitalWrite(13, HIGH);
+    delay(1000);
+    digitalWrite(13, LOW);
     delay(1000);
     Serial.write("Hello, world!\n");
 }
