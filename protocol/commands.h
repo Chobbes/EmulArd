@@ -53,4 +53,16 @@ const uint8_t PINMODE = 9;
 #define ARDUINO_COMMAND(var) ::write(STDOUT_FILENO, &var, sizeof(var))
 #define ARDUINO_SEND(var) ::write(STDOUT_FILENO, &var, sizeof(var))
 
+/*
+  Function to read an integer from STDIN.
+ */
+
+int receive_int(int fd);
+
+/*
+  Function to read a long from STDOUT.
+*/
+
+long receive_long(int fd);
+
 #endif
