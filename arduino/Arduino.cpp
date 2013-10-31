@@ -79,8 +79,8 @@ size_t FakeSerial::write(const uint8_t *buffer, size_t length) {
  */
 
 void pinMode(uint8_t pin, uint8_t mode) {
-    /* Send PINMODE command identifier */
-    ARDUINO_COMMAND(PINMODE);
+    /* Send PIN_MODE command identifier */
+    ARDUINO_COMMAND(PIN_MODE);
 
     /* Send the pin argument, and then the mode */
     ARDUINO_SEND(pin);
@@ -100,11 +100,12 @@ int digitalRead(uint8_t pin) {
 }
 
 
-void digitalWrite(uint8_t pin, int value) {
+void digitalWrite(uint8_t pin, uint8_t value) {
     /* Send DIGITAL_WRITE command */
     ARDUINO_COMMAND(DIGITAL_WRITE);
 
-    /* Write our integer */
+    /* Write our pin, and value */
+    ARDUINO_SEND(pin);
     ARDUINO_SEND(value);
 }
 
@@ -125,7 +126,8 @@ void analogWrite(uint8_t pin, int value) {
     /* Send ANALOG_WRITE command */
     ARDUINO_COMMAND(ANALOG_WRITE);
 
-    /* Write our integer */
+    /* Write our pin and value */
+    ARDUINO_SEND(pin);
     ARDUINO_SEND(value);
 }
 
