@@ -74,6 +74,21 @@ size_t FakeSerial::write(const uint8_t *buffer, size_t length) {
 }
 
 
+size_t FakeSerial::print(const char *str) {
+    return this->write(str);
+}
+
+
+size_t FakeSerial::println(const char *str) {
+    size_t sent_bytes = this->write(str);
+
+    sent_bytes += this->write('\r');
+    sent_bytes += this->write('\n');
+
+    return sent_bytes;
+}
+
+
 int FakeSerial::read() {
     /* Send the read command */
     ARDUINO_COMMAND(SERIAL_READ);
