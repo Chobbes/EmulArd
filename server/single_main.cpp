@@ -22,7 +22,7 @@
 
 */
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include "fakeduino.h"
 
 #include <stdio.h>
@@ -106,24 +106,4 @@ int main(int argc, char *argv[]) {
     }
 
     return 0;
-}
-
-
-void setup() {
-    Serial.begin(9600);
-    pinMode(13, OUTPUT);
-}
-
-void loop() {
-    digitalWrite(13, HIGH);
-    delay(1000);
-    digitalWrite(13, LOW);
-    delay(1000);
-    Serial.println("Hello, world!");
-    Serial.println(255);
-
-    if (Serial.available()) {
-        Serial.write("Got bytes!\n");
-        Serial.write(Serial.read());
-    }
 }
