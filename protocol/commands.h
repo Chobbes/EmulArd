@@ -25,6 +25,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include <stdio.h>
 #include <stdint.h>
 
 /*
@@ -45,8 +46,11 @@ const uint8_t ANALOG_WRITE = 7;
 const uint8_t ANALOG_READ = 8;
 const uint8_t PINMODE = 9;
 
-/* Macros for commands and sending variables over */
-#define ARDUINO_COMMAND(var) write(STDOUT_FILENO, &var, sizeof(var))
-#define ARDUINO_SEND(var) write(STDOUT_FILENO, &var, sizeof(var))
+/*
+  Macros for commands and sending variables over. Need the `::`
+  because of the Serial.write() functions that also use these.
+ */
+#define ARDUINO_COMMAND(var) ::write(STDOUT_FILENO, &var, sizeof(var))
+#define ARDUINO_SEND(var) ::write(STDOUT_FILENO, &var, sizeof(var))
 
 #endif
