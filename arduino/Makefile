@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 
-# You may need to change the includes to suit your needs.
+# Need commands.h
 CXXFLAGS += -I../protocol/
 
 libarduino.a : Arduino.o
