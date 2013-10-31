@@ -60,7 +60,7 @@ void pinMode(uint8_t pin, uint8_t mode);
 
 /* Digital read and write functions */
 int digitalRead(uint8_t pin);
-void digitalWrite(uint8_t pin, int value);
+void digitalWrite(uint8_t pin, uint8_t value);
 
 /* Analog read and write functions */
 int analogRead(uint8_t pin);
