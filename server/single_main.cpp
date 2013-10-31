@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <curses.h>
 
 
 void setup();
@@ -99,8 +100,8 @@ int main(int argc, char *argv[]) {
             prev_light = mega.pins[13];
         }
 
-        if (mega.serial_buffer.available()) {
-            printf("%c", mega.serial_buffer.read());
+        if (mega.serial_out.available()) {
+            printf("%c", mega.serial_out.read());
         }
     }
 
@@ -119,4 +120,9 @@ void loop() {
     digitalWrite(13, LOW);
     delay(1000);
     Serial.write("Hello, world!\n");
+
+    if (Serial.available()) {
+        Serial.write("Got bytes!\n");
+        Serial.write(Serial.read());
+    }
 }
