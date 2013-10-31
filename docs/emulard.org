@@ -62,7 +62,7 @@
 
      Arguments:
      - PIN_NUMBER: uint8_t for the digital pin number.
-     - VALUE: int to write to the digital pin. Should be HIGH or LOW.
+     - VALUE: uint8_t to write to the digital pin. Should be HIGH or LOW.
 
      No response from the server.
 **** Digital Read
@@ -89,7 +89,7 @@
 **** Analog Read
      Read a value from an analog pin.
 
-     : DIGITAL_READ <PIN_NUMBER>
+     : ANALOG_READ <PIN_NUMBER>
 
      Arguments:
      - PIN_NUMBER: uint8_t for the analog pin number.
@@ -98,7 +98,7 @@
 *** Pin Mode
     Set a pin's mode.
 
-    : PINMODE <PIN_NUMBER> <MODE>
+    : PIN_MODE <PIN_NUMBER> <MODE>
 
     Arguments:
     - PIN_NUMBER: uint8_t for the digital pin number.
