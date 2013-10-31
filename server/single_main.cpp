@@ -119,7 +119,8 @@ void loop() {
     delay(1000);
     digitalWrite(13, LOW);
     delay(1000);
-    Serial.write("Hello, world!\n");
+    Serial.println("Hello, world!");
+    Serial.println(255);
 
     if (Serial.available()) {
         Serial.write("Got bytes!\n");
