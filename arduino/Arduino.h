@@ -44,16 +44,16 @@ class FakeSerial {
     size_t write(const uint8_t *buffer, size_t length);
 };
 
-FakeSerial Serial(0), Serial1(1), Serial2(2), Serial3(3);
+static FakeSerial Serial(0), Serial1(1), Serial2(2), Serial3(3);
 
 /* Values for pin reads and writes */
-const int HIGH = 1;
-const int LOW = 0;
+static const int HIGH = 1;
+static const int LOW = 0;
 
 /* Values for pin modes */
-const uint8_t INPUT = 0;
-const uint8_t OUTPUT = 1;
-const uint8_t INPUT_PULLUP = 2;
+static const uint8_t INPUT = 0;
+static const uint8_t OUTPUT = 1;
+static const uint8_t INPUT_PULLUP = 2;
 
 /* Useless pinMode function! */
 void pinMode(uint8_t pin, uint8_t mode);
