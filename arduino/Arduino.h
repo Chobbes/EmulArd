@@ -45,6 +45,28 @@ class FakeSerial {
 
     size_t print(const char *str);
     size_t println(const char *str);
+    size_t print(char value);
+    size_t println(char value);
+
+    size_t print(int value, int base);
+    size_t print(int value);
+    size_t println(int value, int base);
+    size_t println(int value);
+
+    size_t print(unsigned int value, int base);
+    size_t print(unsigned int value);
+    size_t println(unsigned int value, int base);
+    size_t println(unsigned int value);
+
+    size_t print(long value, int base);
+    size_t print(long value);
+    size_t println(long value, int base);
+    size_t println(long value);
+
+    size_t print(unsigned long value, int base);
+    size_t print(unsigned long value);
+    size_t println(unsigned long value, int base);
+    size_t println(unsigned long value);
 
     int read();
     int peek();
@@ -56,6 +78,10 @@ static FakeSerial Serial(0), Serial1(1), Serial2(2), Serial3(3);
 /* Values for pin reads and writes */
 static const int HIGH = 1;
 static const int LOW = 0;
+
+/* Modes for print */
+static const int HEX = 16;
+static const int DEC = 10;
 
 /* Values for pin modes */
 static const uint8_t INPUT = 0;
