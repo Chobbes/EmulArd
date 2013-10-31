@@ -28,13 +28,13 @@
 #include <unistd.h>
 
 
-int receive_int() {
+int receive_int(int fd) {
     int total_read = 0;
     int value = 0;
     char *int_buff = (char *) &value;
 
     while (total_read < sizeof(value)) {
-        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_buff) - total_read);
+        ssize_t bytes_read = read(fd, int_buff, sizeof(int_buff) - total_read);
 
         if (bytes_read > 0) {
             int_buff += bytes_read;
@@ -45,13 +45,13 @@ int receive_int() {
     return value;
 }
 
-long receive_long() {
+long receive_long(int fd) {
     int total_read = 0;
     long value = 0;
     char *long_buff = (char *) &value;
 
     while (total_read < sizeof(value)) {
-        ssize_t bytes_read = read(STDIN_FILENO, long_buff, sizeof(long_buff) - total_read);
+        ssize_t bytes_read = read(fd, long_buff, sizeof(long_buff) - total_read);
 
         if (bytes_read > 0) {
             long_buff += bytes_read;
