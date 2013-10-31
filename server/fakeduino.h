@@ -79,7 +79,6 @@ class SerialBuffer {
 
         return value;
     }
-
 };
 
 
@@ -121,8 +120,9 @@ class ArduinoMega {
     /* May be none-blocking */
     void run() {
         /* Read command for dispatching */
-        uint8_t command;
-        if (read(from_arduino, &command, sizeof(command))) {
+        uint8_t command = receive_char(from_arduino);
+
+        if (command) {
             /* Perform the appropriate action for the command */
             switch (command) {
             case SERIAL_BEGIN:
@@ -130,6 +130,22 @@ class ArduinoMega {
                 break;
             case SERIAL_WRITE:
                 this->serial_write();
+                break;
+            case DIGITAL_WRITE:
+                this->digital_write();
+                break;
+            case DIGITAL_READ:
+                this->digital_read();
+                break;
+            case ANALOG_WRITE:
+                this->analog_write();
+                break;
+            case ANALOG_READ:
+                this->analog_read();
+                break;
+            case PIN_MODE:
+                this->pin_mode();
+                break;
             default:
                 break;
             }
@@ -175,6 +191,62 @@ class ArduinoMega {
         case 3:
             serial3_buffer.append(value);
             break;
-        }        
+        }
+    }
+
+    void digital_write() {
+        uint8_t pin = receive_char(from_arduino);
+        uint8_t value = receive_char(from_arduino);
+
+        if (pin >= sizeof(pins) / sizeof(pins[0])) {
+            return;
+        }
+
+        if (pin >= 54) {
+            pins[pin] = value ? 1023 : 0;
+        }
+        else {
+            pins[pin] = value ? 1 : 0;
+        }
+    }
+
+    void digital_read() {
+        uint8_t pin = receive_char(from_arduino);
+        int value = 0;
+
+        if (pin < sizeof(pins) / sizeof(pins[0])) {
+            value = pins[pin] ? 1 : 0;
+        }
+
+        FD_SEND(to_arduino, value);
+    }
+
+    void analog_write() {
+        uint8_t pin = receive_char(from_arduino);
+        int value = receive_int(from_arduino);
+
+        if (pin >= 0 && pin < 16) {
+            pins[pin + 54] = value;
+        }
+    }
+
+    void analog_read() {
+        uint8_t pin = receive_char(from_arduino);
+        int value = 0;
+
+        if (pin >= 0 && pin < 16) {
+            value = pins[pin + 54];
+        }
+
+        FD_SEND(to_arduino, value);
+    }
+
+    void pin_mode() {
+        uint8_t pin = receive_char(from_arduino);
+        uint8_t mode = receive_char(from_arduino);
+
+        if (pin < sizeof(pin_modes) / sizeof(pin_modes[0])) {
+            pin_modes[pin] = mode;
+        }
     }
 };
