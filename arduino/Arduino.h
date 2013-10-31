@@ -26,6 +26,7 @@
 #define ARDUINO_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 
 class FakeSerial {
