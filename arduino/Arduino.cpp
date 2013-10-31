@@ -1,4 +1,4 @@
-b/* Copyright (C) 2013 Calvin Beck
+/* Copyright (C) 2013 Calvin Beck
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files
@@ -30,7 +30,7 @@ b/* Copyright (C) 2013 Calvin Beck
 #include <stdint.h>
 #include <time.h>
 #include <string.h>
-
+#include <unistd.h>
 
 /*
   Fake serial methods.
@@ -61,7 +61,7 @@ size_t FakeSerial::write(uint8_t value) {
 size_t FakeSerial::write(const char *str) {
     size_t length = strlen(str);
 
-    return this->write(str, length);
+    return this->write((uint8_t *)str, length);
 }
 
 
@@ -72,6 +72,7 @@ size_t FakeSerial::write(const uint8_t *buffer, size_t length) {
 
     return length;
 }
+
 
 /*
   Implementation of the Arduino functions.
@@ -100,8 +101,7 @@ int digitalRead(uint8_t pin) {
     char *int_buff = (char *) &value;
 
     while (total_read < sizeof(value)) {
-        char int_part;
-        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_part) - total_read);
+        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_buff) - total_read);
 
         if (bytes_read > 0) {
             int_buff += bytes_read;
@@ -127,7 +127,7 @@ int analogRead(uint8_t pin) {
     ARDUINO_COMMAND(ANALOG_READ);
 
     /* Send the pin number argument */
-    ARDUINO_SEND(PIN);
+    ARDUINO_SEND(pin);
 
     /* Receive the integer result */
     int total_read = 0;
@@ -135,8 +135,7 @@ int analogRead(uint8_t pin) {
     char *int_buff = (char *) &value;
 
     while (total_read < sizeof(value)) {
-        char int_part;
-        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_part) - total_read);
+        ssize_t bytes_read = read(STDIN_FILENO, int_buff, sizeof(int_buff) - total_read);
 
         if (bytes_read > 0) {
             int_buff += bytes_read;
