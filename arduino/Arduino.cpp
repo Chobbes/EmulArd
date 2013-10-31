@@ -32,6 +32,7 @@
 #include <string.h>
 #include <unistd.h>
 
+
 /*
   Fake serial methods.
  */
@@ -80,12 +81,162 @@ size_t FakeSerial::print(const char *str) {
 
 
 size_t FakeSerial::println(const char *str) {
-    size_t sent_bytes = this->write(str);
+    size_t sent_bytes = this->print(str);
 
     sent_bytes += this->write('\r');
     sent_bytes += this->write('\n');
 
     return sent_bytes;
+}
+
+
+size_t FakeSerial::print(char value) {
+    return this->write(value);
+}
+
+
+size_t FakeSerial::println(char value) {
+    size_t sent_bytes = this->print(value);
+
+    sent_bytes += this->write('\r');
+    sent_bytes += this->write('\n');
+
+    return sent_bytes;
+}
+
+
+size_t FakeSerial::print(int value, int base) {
+    char buffer[128];
+
+    if (base == DEC) {
+        snprintf(buffer, sizeof(buffer), "%d", value);
+    }
+    else {
+        snprintf(buffer, sizeof(buffer), "%X", value);
+    }
+
+    return this->write(buffer);
+}
+
+
+size_t FakeSerial::print(int value) {
+    return this->print(value, DEC);
+}
+
+
+size_t FakeSerial::println(int value, int base) {
+    size_t sent_bytes = this->print(value, base);
+
+    sent_bytes += this->write('\r');
+    sent_bytes += this->write('\n');
+
+    return sent_bytes;
+}
+
+
+size_t FakeSerial::println(int value) {
+    return this->println(value, DEC);
+}
+
+
+size_t FakeSerial::print(unsigned int value, int base) {
+    char buffer[128];
+
+    if (base == DEC) {
+        snprintf(buffer, sizeof(buffer), "%ud", value);
+    }
+    else {
+        snprintf(buffer, sizeof(buffer), "%uX", value);
+    }
+
+    return this->write(buffer);
+}
+
+
+size_t FakeSerial::print(unsigned int value) {
+    return this->write(value);
+}
+
+
+size_t FakeSerial::println(unsigned int value, int base) {
+    size_t sent_bytes = this->print(value, base);
+
+    sent_bytes += this->write('\r');
+    sent_bytes += this->write('\n');
+
+    return sent_bytes; 
+}
+
+
+size_t FakeSerial::println(unsigned int value) {
+    return this->println(value, DEC);
+}
+
+
+size_t FakeSerial::print(long value, int base) {
+    char buffer[128];
+
+    if (base == DEC) {
+        snprintf(buffer, sizeof(buffer), "%ld", value);
+    }
+    else {
+        snprintf(buffer, sizeof(buffer), "%lX", value);
+    }
+
+    return this->write(buffer);
+}
+
+
+size_t FakeSerial::print(long value) {
+    return this->print(value, DEC);
+}
+
+
+size_t FakeSerial::println(long value, int base) {
+    size_t sent_bytes = this->print(value, base);
+
+    sent_bytes += this->write('\r');
+    sent_bytes += this->write('\n');
+
+    return sent_bytes;
+}
+
+
+size_t FakeSerial::println(long value) {
+    return this->println(value, DEC);
+}
+
+
+size_t FakeSerial::print(unsigned long value, int base) {
+    char buffer[128];
+
+    if (base == DEC) {
+        snprintf(buffer, sizeof(buffer), "%lud", value);
+    }
+    else {
+        snprintf(buffer, sizeof(buffer), "%luX", value);
+    }
+
+    return this->write(buffer);
+}
+
+size_t FakeSerial::print(unsigned long value) {
+    return this->print(value, DEC);
+}
+
+
+size_t FakeSerial::println(unsigned long value, int base) {
+    size_t sent_bytes = this->print(value, base);
+
+    sent_bytes += this->write('\r');
+    sent_bytes += this->write('\n');
+
+    return sent_bytes;
+}
+
+
+size_t FakeSerial::println(unsigned long value) {
+    return this->println(value, DEC);
 }
 
 
