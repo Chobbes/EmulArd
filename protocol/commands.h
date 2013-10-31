@@ -36,15 +36,15 @@
 
 
 /* Commands sent from the "Arduino" to the server. */
-const uint8_t SERIAL_BEGIN = 1;
-const uint8_t SERIAL_WRITE = 2;
-const uint8_t SERIAL_READ = 3;
-const uint8_t SERIAL_AVAILABLE = 4;
-const uint8_t DIGITAL_WRITE = 5;
-const uint8_t DIGITAL_READ = 6;
-const uint8_t ANALOG_WRITE = 7;
-const uint8_t ANALOG_READ = 8;
-const uint8_t PINMODE = 9;
+static const uint8_t SERIAL_BEGIN = 1;
+static const uint8_t SERIAL_WRITE = 2;
+static const uint8_t SERIAL_READ = 3;
+static const uint8_t SERIAL_AVAILABLE = 4;
+static const uint8_t DIGITAL_WRITE = 5;
+static const uint8_t DIGITAL_READ = 6;
+static const uint8_t ANALOG_WRITE = 7;
+static const uint8_t ANALOG_READ = 8;
+static const uint8_t PINMODE = 9;
 
 /*
   Macros for commands and sending variables over. Need the `::`
@@ -54,13 +54,19 @@ const uint8_t PINMODE = 9;
 #define ARDUINO_SEND(var) ::write(STDOUT_FILENO, &var, sizeof(var))
 
 /*
-  Function to read an integer from STDIN.
+  Function to read a character from a file descriptor.
+ */
+
+char receive_char(int fd);
+
+/*
+  Function to read an integer from a file descriptor.
  */
 
 int receive_int(int fd);
 
 /*
-  Function to read a long from STDOUT.
+  Function to read a long from a file descriptor.
 */
 
 long receive_long(int fd);
