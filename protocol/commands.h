@@ -44,7 +44,7 @@ static const uint8_t DIGITAL_WRITE = 5;
 static const uint8_t DIGITAL_READ = 6;
 static const uint8_t ANALOG_WRITE = 7;
 static const uint8_t ANALOG_READ = 8;
-static const uint8_t PINMODE = 9;
+static const uint8_t PIN_MODE = 9;
 
 /*
   Macros for commands and sending variables over. Need the `::`
@@ -52,6 +52,8 @@ static const uint8_t PINMODE = 9;
  */
 #define ARDUINO_COMMAND(var) ::write(STDOUT_FILENO, &var, sizeof(var))
 #define ARDUINO_SEND(var) ::write(STDOUT_FILENO, &var, sizeof(var))
+#define FD_SEND(fd, var) ::write(fd, &var, sizeof(var))
+
 
 /*
   Function to read a character from a file descriptor.
