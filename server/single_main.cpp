@@ -51,10 +51,15 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+
     pid_t pid = fork();
 
     if (pid == 0) {
         /* Parent process - run the Arduino stuff */
+
+        /* Need binary mode badly! */
+        freopen(NULL, "wb", stdout);
+        freopen(NULL, "rb", stdin);
 
         /* Set up the STDIN pipe */
         close(arduino_in[1]);  /* Close the write end */
@@ -69,7 +74,7 @@ int main(int argc, char *argv[]) {
         close(arduino_out[0]);  /* Close the read end */
 
         /* Set STDOUT to the write end */
-        if (-1 == dup2(arduino_out[1], STDIN_FILENO)) {
+        if (-1 == dup2(arduino_out[1], STDOUT_FILENO)) {
             perror("Could not set up output pipe");
             exit(EXIT_FAILURE);
         }
@@ -87,8 +92,21 @@ int main(int argc, char *argv[]) {
 
     while (1) {
         mega.run();
+
+        if (mega.serial_buffer.available()) {
+            printf("%c", mega.serial_buffer.read());
+        }
     }
 
     return 0;
 }
 
+
+void setup() {
+    Serial.begin(9600);
+}
+
+void loop() {
+    delay(1000);
+    Serial.write("Hello, world!\n");
+}
