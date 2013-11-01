@@ -88,6 +88,9 @@ static const uint8_t INPUT = 0;
 static const uint8_t OUTPUT = 1;
 static const uint8_t INPUT_PULLUP = 2;
 
+/* Arduino types */
+typedef uint8_t byte;
+
 /* Useless pinMode function! */
 void pinMode(uint8_t pin, uint8_t mode);
 
