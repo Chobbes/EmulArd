@@ -82,9 +82,7 @@ size_t FakeSerial::print(const char *str) {
 
 size_t FakeSerial::println(const char *str) {
     size_t sent_bytes = this->print(str);
-
-    sent_bytes += this->write('\r');
-    sent_bytes += this->write('\n');
+    sent_bytes += this->println();
 
     return sent_bytes;
 }
@@ -97,9 +95,7 @@ size_t FakeSerial::print(char value) {
 
 size_t FakeSerial::println(char value) {
     size_t sent_bytes = this->print(value);
-
-    sent_bytes += this->write('\r');
-    sent_bytes += this->write('\n');
+    sent_bytes += this->println();
 
     return sent_bytes;
 }
@@ -126,9 +122,7 @@ size_t FakeSerial::print(int value) {
 
 size_t FakeSerial::println(int value, int base) {
     size_t sent_bytes = this->print(value, base);
-
-    sent_bytes += this->write('\r');
-    sent_bytes += this->write('\n');
+    sent_bytes += this->println();
 
     return sent_bytes;
 }
@@ -160,9 +154,7 @@ size_t FakeSerial::print(unsigned int value) {
 
 size_t FakeSerial::println(unsigned int value, int base) {
     size_t sent_bytes = this->print(value, base);
-
-    sent_bytes += this->write('\r');
-    sent_bytes += this->write('\n');
+    sent_bytes += this->println();
 
     return sent_bytes; 
 }
@@ -194,9 +186,7 @@ size_t FakeSerial::print(long value) {
 
 size_t FakeSerial::println(long value, int base) {
     size_t sent_bytes = this->print(value, base);
-
-    sent_bytes += this->write('\r');
-    sent_bytes += this->write('\n');
+    sent_bytes += this->println();
 
     return sent_bytes;
 }
@@ -227,9 +217,7 @@ size_t FakeSerial::print(unsigned long value) {
 
 size_t FakeSerial::println(unsigned long value, int base) {
     size_t sent_bytes = this->print(value, base);
-
-    sent_bytes += this->write('\r');
-    sent_bytes += this->write('\n');
+    sent_bytes += this->println();
 
     return sent_bytes;
 }
@@ -237,6 +225,14 @@ size_t FakeSerial::println(unsigned long value, int base) {
 
 size_t FakeSerial::println(unsigned long value) {
     return this->println(value, DEC);
+}
+
+
+size_t FakeSerial::println() {
+    size_t sent_bytes = this->write('\r');
+    sent_bytes += this->write('\n');
+
+    return sent_bytes;
 }
 
 
