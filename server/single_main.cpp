@@ -80,13 +80,17 @@ int main(int argc, char *argv[]) {
             exit(EXIT_FAILURE);
         }
 
-        /* Run the arduino stuff */
+        /* Run the Arduino stuff */
         setup();
 
         while (1) {
             loop();
         }
     }
+
+
+    /* Can't have buffered stdout, it ruins stuff! */
+    setvbuf(stdout, NULL, _IONBF, 0);
 
     /* Child process - set up Arduino server */
     ArduinoMega mega(arduino_in[1], arduino_out[0]);
