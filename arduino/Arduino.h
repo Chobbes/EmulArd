@@ -68,6 +68,8 @@ class FakeSerial {
     size_t println(unsigned long value, int base);
     size_t println(unsigned long value);
 
+    size_t println();
+
     int read();
     int peek();
     int available();
