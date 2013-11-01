@@ -24,9 +24,7 @@
 # Need commands.h and Arduino.h
 CXXFLAGS += -I../protocol/ -I../arduino/
 
-single_main.o :
-
-%.o : %.cpp %.h
+single_main.o : single_main.cpp fakeduino.h
 	$(CXX) -c $< $(CXXFLAGS)
 
 clean:
