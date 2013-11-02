@@ -154,11 +154,6 @@ int main(int argc, char *argv[]) {
         if (FD_ISSET(mega.from_arduino, &read_set)) {
             mega.run();
 
-            if (prev_light != mega.pins[13]) {
-                printf("LIGHT: %d\n", mega.pins[13]);
-                prev_light = mega.pins[13];
-            }
-
             if (mega.serial_out.available()) {
                 char output = mega.serial_out.read();
                 write(master, &output, sizeof(output));
