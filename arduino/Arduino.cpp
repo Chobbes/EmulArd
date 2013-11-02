@@ -140,7 +140,7 @@ size_t FakeSerial::print(unsigned int value, int base) {
         snprintf(buffer, sizeof(buffer), "%u", value);
     }
     else {
-        snprintf(buffer, sizeof(buffer), "%uX", value);
+        snprintf(buffer, sizeof(buffer), "%X", value);
     }
 
     return this->write(buffer);
@@ -148,7 +148,7 @@ size_t FakeSerial::print(unsigned int value, int base) {
 
 
 size_t FakeSerial::print(unsigned int value) {
-    return this->write(value);
+    return this->print(value, DEC);
 }
 
 
