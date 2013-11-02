@@ -27,7 +27,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <curses.h>
+#include <fcntl.h>
+#include <sys/select.h>
 
 
 void setup();
@@ -88,7 +89,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-
     /* Can't have buffered stdout, it ruins stuff! */
     setvbuf(stdout, NULL, _IONBF, 0);
 
@@ -96,18 +96,76 @@ int main(int argc, char *argv[]) {
     ArduinoMega mega(arduino_in[1], arduino_out[0]);
     int prev_light = 0;
 
-    while (1) {
-        mega.run();
+    /* Set up a PTTY so we can connect to our Arduino! */
+    int master = posix_openpt(O_RDWR);  /* Create the master pty fd */
 
-        if (prev_light != mega.pins[13]) {
-            printf("LIGHT: %d\n", mega.pins[13]);
-            prev_light = mega.pins[13];
+    if (-1 == master) {
+        perror("Could not create pty master");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Set the mode and owner of the slave of our master pty */
+    if (-1 == grantpt(master)) {
+        perror("Could not set mode or ownership of pty");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Unlock the slave pty */
+    if (-1 == unlockpt(master)) {
+        perror("Could not get slave pty");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Now we want to get the device name for the slave pty */
+    char *slave_name = ptsname(master);
+
+    if (NULL == slave_name) {
+        perror("Could not get name of slave device");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Arduino on: %s\n", slave_name);
+
+    fd_set read_set;
+    int max_read = 1 + (master > mega.from_arduino ? master : mega.from_arduino);
+
+    while (1) {
+        /* Set up the read set */
+        FD_ZERO(&read_set);
+
+        FD_SET(master, &read_set);
+        FD_SET(mega.from_arduino, &read_set);
+
+        /* Wait until something happens */
+        select(max_read, &read_set, NULL, NULL, NULL);
+
+        if (FD_ISSET(master, &read_set)) {
+            char input;
+            int bytes_read = read(master, &input, sizeof(input));
+
+            if (-1 == bytes_read) {
+                perror("Error reading from serial");
+                exit(EXIT_FAILURE);
+            }
+
+            mega.serial_in.append(input);
         }
 
-        if (mega.serial_out.available()) {
-            printf("%c", mega.serial_out.read());
+        if (FD_ISSET(mega.from_arduino, &read_set)) {
+            mega.run();
+
+            if (prev_light != mega.pins[13]) {
+                printf("LIGHT: %d\n", mega.pins[13]);
+                prev_light = mega.pins[13];
+            }
+
+            if (mega.serial_out.available()) {
+                char output = mega.serial_out.read();
+                write(master, &output, sizeof(output));
+            }
         }
     }
 
     return 0;
 }
+    
