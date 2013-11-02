@@ -137,7 +137,7 @@ size_t FakeSerial::print(unsigned int value, int base) {
     char buffer[128];
 
     if (base == DEC) {
-        snprintf(buffer, sizeof(buffer), "%ud", value);
+        snprintf(buffer, sizeof(buffer), "%u", value);
     }
     else {
         snprintf(buffer, sizeof(buffer), "%uX", value);
@@ -201,7 +201,7 @@ size_t FakeSerial::print(unsigned long value, int base) {
     char buffer[128];
 
     if (base == DEC) {
-        snprintf(buffer, sizeof(buffer), "%lud", value);
+        snprintf(buffer, sizeof(buffer), "%lu", value);
     }
     else {
         snprintf(buffer, sizeof(buffer), "%luX", value);
@@ -351,10 +351,10 @@ void delay(unsigned long milliseconds) {
 
 
 unsigned long micros() {
-    return (clock() / CLOCKS_PER_SEC) * 1000000;
+    return clock() * 1000000 / CLOCKS_PER_SEC;
 }
 
 
 unsigned long millis() {
-    return (clock() / CLOCKS_PER_SEC) * 1000;
+    return micros() / 1000;
 }
