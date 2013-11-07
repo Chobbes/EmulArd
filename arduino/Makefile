@@ -21,17 +21,23 @@
 # SOFTWARE.
 
 
+# Install directory
+INSTALL_DIR = /usr/local/lib
+
 # Need commands.h
 CXXFLAGS += -I../protocol/
 
-libarduino.a : Arduino.o
+libemulard.a : Arduino.o
 	ar -cvq $@ $^
 
 %.o : %.cpp %.h
 	$(CXX) -c $< $(CXXFLAGS)
 
+install : libemulard.a
+	cp $< $(INSTALL_DIR)
+
 clean:
-	$(RM) libarduino.a
+	$(RM) libemulard.a
 	$(RM) *.o
 
-.PHONY: clean
+.PHONY: install clean
