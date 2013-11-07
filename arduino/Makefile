@@ -24,6 +24,9 @@
 # Install directory
 INSTALL_DIR = /usr/local/lib
 
+# Header directory
+HEADER_DIR = /usr/local/include
+
 # Need commands.h
 CXXFLAGS += -I../protocol/
 
@@ -33,8 +36,9 @@ libemulard.a : Arduino.o
 %.o : %.cpp %.h
 	$(CXX) -c $< $(CXXFLAGS)
 
-install : libemulard.a
+install : libemulard.a Arduino.h
 	cp $< $(INSTALL_DIR)
+	cp Arduino.h $(HEADER_DIR)
 
 clean:
 	$(RM) libemulard.a
