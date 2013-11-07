@@ -21,14 +21,25 @@
 # SOFTWARE.
 
 
-libardprotocol.a : commands.o
+# Install directory for the library.
+INSTALL_DIR = /usr/local/lib
+
+# Install directory for header files.
+HEADER_DIR = /usr/local/include/emulard
+
+libemulardprotocol.a : commands.o
 	ar -cvq $@ $^
 
 %.o : %.cpp %.h
 	$(CXX) -c $< $(CXXFLAGS)
 
+install : libemulardprotocol.a commands.h
+	mkdir -p $(HEADER_DIR)
+	cp commands.h $(HEADER_DIR)
+	cp $< $(INSTALL_DIR)
+
 clean:
-	$(RM) libardprotocol.a
+	$(RM) libemulardprotocol.a
 	$(RM) *.o
 
 .PHONY: clean
