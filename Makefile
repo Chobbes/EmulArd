@@ -23,7 +23,7 @@
 
 all: arduino protocol server
 
-install: arduino_install protocol_install
+install: arduino_install protocol_install server_install
 
 server: arduino protocol
 	make -C server
@@ -33,6 +33,9 @@ arduino: protocol
 
 protocol:
 	make -C protocol
+
+server_install: server
+	make -C server install
 
 arduino_install: arduino
 	make -C arduino install
