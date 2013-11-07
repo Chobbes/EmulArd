@@ -24,8 +24,15 @@
 # Need commands.h and Arduino.h
 CXXFLAGS += -I../protocol/ -I../arduino/
 
+# Install directory for header files.
+HEADER_DIR = /usr/local/include/emulard
+
 single_main.o : single_main.cpp fakeduino.h
 	$(CXX) -c $< $(CXXFLAGS)
+
+install: fakeduino.h
+	mkdir -p $(HEADER_DIR)
+	cp $< $(HEADER_DIR)
 
 clean:
 	$(RM) *.o
