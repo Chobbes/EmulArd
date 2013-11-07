@@ -94,7 +94,6 @@ int main(int argc, char *argv[]) {
 
     /* Child process - set up Arduino server */
     ArduinoMega mega(arduino_in[1], arduino_out[0]);
-    int prev_light = 0;
 
     /* Set up a PTTY so we can connect to our Arduino! */
     int master = posix_openpt(O_RDWR);  /* Create the master pty fd */
