@@ -116,3 +116,60 @@
     - MODE: A uint8_t for the mode. Should be INPUT, OUTPUT, or INPUT_PULLUP.
 
     No response from the server.
+* Arduino Networks
+  Since the individual Arduino programs execute the protocol via STDIO
+  we can simply execute multiple Arduino processes, and have pipes to
+  each one so that we can have a server which handles connections
+  between multiple Arduinos.
+
+** Networking Program
+   Emulard provides a program which executes a bundle of Arduino
+   programs and creates a network of them. Each Arduino will be
+   assigned a pseudo TTY for Serial connections as well (though this
+   can safely be ignored it will by default print which Arduino
+   received which pseudo TTY).
+
+   This program reads a .ard file which specifies what the network is
+   and provides paths to each of the executables.
+
+   Each .ard file consists of two sections. The first section
+   declares the virtual arduinos, and the second section specifies
+   the connections between these virtual Arduino programs.
+
+   Note that all pin specifications are the final pin values in the
+   fake Arduino's pin array. For instance in the case of the mega
+   analog pin 0 is actually pin 54.
+
+*** Declarations
+     The initialization section consists of entries of the form
+
+     : <NAME> : <PATH> ;
+
+     Where name is a _unique_ identifier for the Arduino, and path is
+     the path to the desired executable file for the Arduino
+     program. This name should not include colons, spaces,
+     semi-colons, slashes, e.t.c.
+
+*** Connection Specifications
+    After all of the declarations have been performed (and /only/
+    after), we may create a list of connections as follows...
+
+    Pin connections are unidirectional and are made like
+
+    : <NAME> : <PIN> -> <NAME> : <PIN> ;
+
+    In this case the first Arduino's pin is an output which connects
+    to the second Arduino's input pin. '<PIN>' is anything of the form
+    'p<integer>'.
+
+    : <NAME> : <PORT> -- <NAME> : <PORT> ;
+
+    Is a bidirectional serial connection between the two Arduinos
+    where '<PORT>' is anything of the form 's<integer>', and
+    represents one of the serial ports on the Arduino.
+
+*** Comments
+    The .ard files support line comments, and ignores all
+    whitespace. The line comments are created with the '#'
+    character. Anything after a '#' is ignored by the parser until a
+    newline is encountered.
