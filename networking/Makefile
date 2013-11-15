@@ -22,7 +22,7 @@
 
 
 arduino_net : network_arduinos.o network_parse.o
-	$(CXX) $^ -o $@
+	$(CXX) $^ -o $@ -lemulard -lemulardprotocol
 
 network_arduinos.o : network_arduinos.cpp network_parse.h
 	$(CXX) -c $< $(CXXFLAGS)
