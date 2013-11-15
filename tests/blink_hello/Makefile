@@ -22,7 +22,7 @@
 
 
 CXXFLAGS += -I../../arduino/
-LDFLAGS += -L../../protocol -L../../server -L../../arduino -larduino -lardprotocol
+LDFLAGS += -L../../protocol -L../../server -L../../arduino -lemulard -lemulardprotocol
 
 blink_hello : blink.o ../../server/single_main.o
 	$(CXX) $^ -o $@ $(LDFLAGS)
