@@ -359,3 +359,29 @@ void free_network(ArduinoNetwork *network)
     network->num_serial = 0;
     network->num_pins = 0;
 }
+
+
+void print_network(ArduinoNetwork *network)
+{
+    printf("%lu Arduinos:\n\n", network->num_arduinos);
+
+    for (int i = 0; i < network->num_arduinos; ++i) {
+        printf("%s - %s\n", network->names[i], network->paths[i]);
+    }
+
+    printf("\n");
+
+    for (int i = 0; i < network->num_pins; ++i) {
+        PinConnection con = network->pins[i];
+        printf("%s pin %d to %s pin %d\n", network->names[con.out_index], con.out_pin,
+               network->names[con.in_index], con.in_pin);
+    }
+
+    printf("\n");
+
+    for (int i = 0; i < network->num_serial; ++i) {
+        SerialConnection con = network->serial_ports[i];
+        printf("%s serial %d to %s serial %d\n", network->names[con.out_index], con.out_port,
+               network->names[con.in_index], con.in_port);
+    }
+}
