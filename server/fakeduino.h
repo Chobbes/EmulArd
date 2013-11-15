@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "commands.h"
+#include <emulard/commands.h>
 
 
 /*
