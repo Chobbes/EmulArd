@@ -1,6 +1,6 @@
 # Declare our fuddy duddy arduinos.
-d arduino1 : ~/supercoolprogram # It's really pretty cool.
-d arduino2 : ~/yay-and-stuff # Y'know, whatever.
+d arduino1:~/supercoolprogram # It's really pretty cool.
+d arduino2:~/yay-and-stuff # Y'know, whatever.
 
 # Now I guess we should connect the serial ports.
 s arduino1:1 arduino2:1
