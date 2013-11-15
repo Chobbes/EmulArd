@@ -25,7 +25,9 @@
 #include "network_parse.h"
 
 #include <stdio.h>
-
+#include <string.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 
 /* Returns 1 for ' ', '\t', or '\n', and 0 otherwise */
@@ -123,13 +125,8 @@ static void skip_aesthetics(FILE *ard_file)
 }
 
 
-static int parse_integer(FILE *ard_file, int *err)
+static int parse_integer(FILE *ard_file)
 {
-    if (NULL == err) {
-        int tmp_err;
-        err = &tmp_err;
-    }
-
     int character = fgetc(ard_file);
     int digit_value = char_digit_value(character);
     int total_value = 0;
@@ -142,13 +139,6 @@ static int parse_integer(FILE *ard_file, int *err)
         digit_value = char_digit_value(character);
     }
 
-    if (is_whitespace(character)) {
-        *err = 0;
-    }
-    else if (EOF == character) {
-        *err = 0;
-    }
-
     return total_value;
 }
 
@@ -158,13 +148,8 @@ static char *parse_identifier(FILE *ard_file)
 {
     size_t max_length = 64;
 
-    char *identifier = malloc(max_length);
+    char *identifier = (char *)malloc(max_length);
     size_t length = 0;
-
-    if (NULL == err) {
-        int tmp_err;
-        err = &tmp_err;
-    }
 
     while (1) {
         int character = fgetc(ard_file);
@@ -172,7 +157,7 @@ static char *parse_identifier(FILE *ard_file)
         if (is_comment(character) || is_whitespace(character) || is_separator(character)) {
             if (max_length <= length) {
                 max_length = length + 1;
-                identifier = realloc(identifier, max_length);
+                identifier = (char *)realloc(identifier, max_length);
             }
 
             identifier[length] = '\0';
@@ -182,7 +167,7 @@ static char *parse_identifier(FILE *ard_file)
         else {
             if (max_length <= length) {
                 max_length *= 2;
-                identifier = realloc(identifier, max_length);
+                identifier = (char *)realloc(identifier, max_length);
             }
 
             identifier[length] = character;
@@ -198,10 +183,10 @@ static int parse_declaration(FILE *ard_file, ArduinoNetwork *network)
     char *name = parse_identifier(ard_file);
 
     skip_aesthetics(ard_file);
-    int *path = parse_identifier(ard_file);
+    char *path = parse_identifier(ard_file);
 
-    network->names = realloc(network->names, network->num_arduinos + sizeof(network->names[0]));
-    network->paths = realloc(network->paths, network->num_arduinos + sizeof(network->paths[0]));
+    network->names = (char **)realloc(network->names, network->num_arduinos + sizeof(network->names[0]));
+    network->paths = (char **)realloc(network->paths, network->num_arduinos + sizeof(network->paths[0]));
 
     network->names[network->num_arduinos] = name;
     network->paths[network->num_arduinos] = path;
@@ -253,7 +238,7 @@ static int parse_pin(FILE *ard_file, ArduinoNetwork *network)
     free(in_name);
 
     /* Add the connection to the network */
-    network->pins = realloc(network->pins, network->num_pins + sizeof(network->pins[0]));
+    network->pins = (PinConnection *)realloc(network->pins, network->num_pins + sizeof(network->pins[0]));
     network->pins[network->num_pins] = connection;
 
     ++network->num_pins;
@@ -291,8 +276,8 @@ static int parse_serial(FILE *ard_file, ArduinoNetwork *network)
     free(in_name);
 
     /* Add the connection to the network */
-    network->serial_ports = realloc(network->serial_ports, network->num_serial + sizeof(network->serial_ports[0]));
-    network->pins[network->num_serial] = connection;
+    network->serial_ports = (SerialConnection *) realloc(network->serial_ports, network->num_serial + sizeof(network->serial_ports[0]));
+    network->serial_ports[network->num_serial] = connection;
 
     ++network->num_serial;
 
@@ -324,15 +309,15 @@ ArduinoNetwork parse_network(FILE *ard_file)
     ArduinoNetwork network;
 
     /* Initialize the network structure so we can try to fill it */
-    network->names = NULL;
-    network->paths = NULL;
-    network->num_arduinos = 0;
+    network.names = NULL;
+    network.paths = NULL;
+    network.num_arduinos = 0;
 
-    network->serial_ports = NULL;
-    network->num_serial = 0;
+    network.serial_ports = NULL;
+    network.num_serial = 0;
 
-    network->pins = NULL;
-    network->num_pins = 0;
+    network.pins = NULL;
+    network.num_pins = 0;
 
     /* First let's skip past all of the whitespace / comments */
     skip_aesthetics(ard_file);
