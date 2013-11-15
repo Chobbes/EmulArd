@@ -30,6 +30,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/select.h>
 
 
 pid_t launch_arduino(char *name, char *path, int *in_pipe, int *out_pipe) {
@@ -46,7 +48,7 @@ pid_t launch_arduino(char *name, char *path, int *in_pipe, int *out_pipe) {
     pid_t pid = fork();
 
     if (pid == 0) {
-        /* Parent process - run the Arduino stuff */
+        /* Child process - run the Arduino stuff */
 
         /* Need binary mode badly! */
         freopen(NULL, "wb", stdout);
@@ -90,6 +92,9 @@ void usage(char *program_name)
 
 int main(int argc, char *argv[])
 {
+    /* Can't have buffered stdout, it ruins stuff! */
+    setvbuf(stdout, NULL, _IONBF, 0);
+
     if (2 != argc) {
         fprintf(stderr, "Invalid number of arguments!\n");
         usage(argv[0]);
@@ -113,7 +118,7 @@ int main(int argc, char *argv[])
     int arduino_in[2];  /* Arduino STDIN pipe */
     int arduino_out[2];  /* Arduino STDOUT pipe */
 
-    /* Our list of all of the Arduinos */
+    /* Create an array of all of the Arduinos */
     ArduinoMega *arduinos[network.num_arduinos];
 
     for (int i = 0; i < network.num_arduinos; ++i) {
@@ -128,10 +133,281 @@ int main(int argc, char *argv[])
         arduinos[i] = new ArduinoMega(arduino_in[1], arduino_out[0]);
     }
 
-    /* Can't have buffered stdout, it ruins stuff! */
-    setvbuf(stdout, NULL, _IONBF, 0);
+    /* Get a pseudo-tty for each Arduino */
+    int tty_masters[network.num_arduinos];
 
-    while(1) {}
+    for (int i = 0; i < network.num_arduinos; ++i) {
+        int master = posix_openpt(O_RDWR);  /* Create the master pty fd */
+
+        if (-1 == master) {
+            perror("Could not create pty master");
+            exit(EXIT_FAILURE);
+        }
+
+        /* Set the mode and owner of the slave of our master pty */
+        if (-1 == grantpt(master)) {
+            perror("Could not set mode or ownership of pty");
+            exit(EXIT_FAILURE);
+        }
+
+        /* Unlock the slave pty */
+        if (-1 == unlockpt(master)) {
+            perror("Could not get slave pty");
+            exit(EXIT_FAILURE);
+        }
+
+        /* Now we want to get the device name for the slave pty */
+        char *slave_name = ptsname(master);
+
+        if (NULL == slave_name) {
+            perror("Could not get name of slave device");
+            exit(EXIT_FAILURE);
+        }
+
+        /* Save in the masters array */
+        tty_masters[i] = master;
+
+        char *name = network.names[i];
+        printf("%s on: %s\n", name, slave_name);
+    }
+
+    fd_set read_set;
+    int max_read = tty_masters[0];
+
+    /* Find the maximum file descriptor */
+    for (int i = 0; i < network.num_arduinos; ++i) {
+        if (max_read < tty_masters[i]) {
+            max_read = tty_masters[i];
+        }
+
+        if (max_read < arduinos[i]->from_arduino) {
+            max_read = arduinos[i]->from_arduino;
+        }
+    }
+
+    max_read++;
+
+    while (1) {
+        /* Set up the read set */
+        FD_ZERO(&read_set);
+
+        for (int i = 0; i < network.num_arduinos; ++i) {
+            FD_SET(tty_masters[i], &read_set);
+            FD_SET(arduinos[i]->from_arduino, &read_set);
+        }
+
+        /* Wait until something happens */
+        select(max_read, &read_set, NULL, NULL, NULL);
+
+        /* TTY to Arduino */
+        for (int i = 0; i < network.num_arduinos; ++i) {
+            if (FD_ISSET(tty_masters[i], &read_set)) {
+                char input;
+                int bytes_read = read(tty_masters[i], &input, sizeof(input));
+
+                if (-1 == bytes_read) {
+                    perror("Error reading from serial");
+                    exit(EXIT_FAILURE);
+                }
+
+                arduinos[i]->serial_in.append(input);
+            }
+        }
+
+        /* Arduino doing something */
+        for (int i = 0; i < network.num_arduinos; ++i) {
+            if (FD_ISSET(arduinos[i]->from_arduino, &read_set)) {
+                arduinos[i]->run();
+
+                if (arduinos[i]->serial_out.available()) {
+                    char output = arduinos[i]->serial_out.read();
+
+                    /* Write to pseudo TTY */
+                    write(tty_masters[i], &output, sizeof(output));
+
+                    /* Find all serial connections */
+                    for (int j = 0; j < network.num_serial; ++j) {
+                        SerialConnection con = network.serial_ports[j];
+                        
+                        if (con.in_index == i && con.in_port == 0) {
+                            int out = con.out_index;
+                            
+                            switch (con.out_port) {
+                            case 0:
+                                arduinos[out]->serial_in.append(output);
+                                break;
+                            case 1:
+                                arduinos[out]->serial1_in.append(output);
+                                break;
+                            case 2:
+                                arduinos[out]->serial2_in.append(output);
+                                break;
+                            case 3:
+                                arduinos[out]->serial3_in.append(output);
+                                break;
+                            }
+                        }
+                        else if (con.out_index == i && con.out_port == 0) {
+                            int in = con.in_index;
+
+                            switch (con.in_port) {
+                            case 0:
+                                arduinos[in]->serial_in.append(output);
+                                break;
+                            case 1:
+                                arduinos[in]->serial1_in.append(output);
+                                break;
+                            case 2:
+                                arduinos[in]->serial2_in.append(output);
+                                break;
+                            case 3:
+                                arduinos[in]->serial3_in.append(output);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (arduinos[i]->serial1_out.available()) {
+                    char output = arduinos[i]->serial1_out.read();
+
+                    /* Find all serial connections */
+                    for (int j = 0; j < network.num_serial; ++j) {
+                        SerialConnection con = network.serial_ports[j];
+                        
+                        if (con.in_index == i && con.in_port == 0) {
+                            int out = con.out_index;
+                            
+                            switch (con.out_port) {
+                            case 0:
+                                arduinos[out]->serial_in.append(output);
+                                break;
+                            case 1:
+                                arduinos[out]->serial1_in.append(output);
+                                break;
+                            case 2:
+                                arduinos[out]->serial2_in.append(output);
+                                break;
+                            case 3:
+                                arduinos[out]->serial3_in.append(output);
+                                break;
+                            }
+                        }
+                        else if (con.out_index == i && con.out_port == 0) {
+                            int in = con.in_index;
+
+                            switch (con.in_port) {
+                            case 0:
+                                arduinos[in]->serial_in.append(output);
+                                break;
+                            case 1:
+                                arduinos[in]->serial1_in.append(output);
+                                break;
+                            case 2:
+                                arduinos[in]->serial2_in.append(output);
+                                break;
+                            case 3:
+                                arduinos[in]->serial3_in.append(output);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (arduinos[i]->serial2_out.available()) {
+                    char output = arduinos[i]->serial2_out.read();
+
+                    /* Find all serial connections */
+                    for (int j = 0; j < network.num_serial; ++j) {
+                        SerialConnection con = network.serial_ports[j];
+                        
+                        if (con.in_index == i && con.in_port == 0) {
+                            int out = con.out_index;
+                            
+                            switch (con.out_port) {
+                            case 0:
+                                arduinos[out]->serial_in.append(output);
+                                break;
+                            case 1:
+                                arduinos[out]->serial1_in.append(output);
+                                break;
+                            case 2:
+                                arduinos[out]->serial2_in.append(output);
+                                break;
+                            case 3:
+                                arduinos[out]->serial3_in.append(output);
+                                break;
+                            }
+                        }
+                        else if (con.out_index == i && con.out_port == 0) {
+                            int in = con.in_index;
+
+                            switch (con.in_port) {
+                            case 0:
+                                arduinos[in]->serial_in.append(output);
+                                break;
+                            case 1:
+                                arduinos[in]->serial1_in.append(output);
+                                break;
+                            case 2:
+                                arduinos[in]->serial2_in.append(output);
+                                break;
+                            case 3:
+                                arduinos[in]->serial3_in.append(output);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (arduinos[i]->serial3_out.available()) {
+                    char output = arduinos[i]->serial3_out.read();
+
+                    /* Find all serial connections */
+                    for (int j = 0; j < network.num_serial; ++j) {
+                        SerialConnection con = network.serial_ports[j];
+                        
+                        if (con.in_index == i && con.in_port == 0) {
+                            int out = con.out_index;
+                            
+                            switch (con.out_port) {
+                            case 0:
+                                arduinos[out]->serial_in.append(output);
+                                break;
+                            case 1:
+                                arduinos[out]->serial1_in.append(output);
+                                break;
+                            case 2:
+                                arduinos[out]->serial2_in.append(output);
+                                break;
+                            case 3:
+                                arduinos[out]->serial3_in.append(output);
+                                break;
+                            }
+                        }
+                        else if (con.out_index == i && con.out_port == 0) {
+                            int in = con.in_index;
+
+                            switch (con.in_port) {
+                            case 0:
+                                arduinos[in]->serial_in.append(output);
+                                break;
+                            case 1:
+                                arduinos[in]->serial1_in.append(output);
+                                break;
+                            case 2:
+                                arduinos[in]->serial2_in.append(output);
+                                break;
+                            case 3:
+                                arduinos[in]->serial3_in.append(output);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     return 0;
 }
