@@ -51,46 +51,53 @@ int main(int argc, char *argv[]) {
     int arduino_in[2];  /* Arduino STDIN pipe */
     int arduino_out[2];  /* Arduino STDOUT pipe */
 
-    if (-1 == pipe(arduino_in)) {
-        perror("Could not create input pipe");
-        exit(EXIT_FAILURE);
-    }
+    if (!client_mode) {
+        if (-1 == pipe(arduino_in)) {
+            perror("Could not create input pipe");
+            exit(EXIT_FAILURE);
+        }
 
-    if (-1 == pipe(arduino_out)) {
-        perror("Could not create output pipe");
-        exit(EXIT_FAILURE);
+        if (-1 == pipe(arduino_out)) {
+            perror("Could not create output pipe");
+            exit(EXIT_FAILURE);
+        }
     }
 
 
     pid_t pid = 0;
 
-    if (!client_mode) {
+    if (0 == client_mode) {
         pid = fork();
     }
 
     if (pid == 0) {
-        /* Parent process - run the Arduino stuff */
+        /* Child process - run the Arduino stuff */
 
+        /* Can't have buffered stdout, it ruins stuff! */
+        setvbuf(stdout, NULL, _IONBF, 0);
+    
         /* Need binary mode badly! */
         freopen(NULL, "wb", stdout);
         freopen(NULL, "rb", stdin);
 
-        /* Set up the STDIN pipe */
-        close(arduino_in[1]);  /* Close the write end */
+        if (!client_mode) {
+            /* Set up the STDIN pipe */
+            close(arduino_in[1]);  /* Close the write end */
 
-        /* Set STDIN to the read end */
-        if (-1 == dup2(arduino_in[0], STDIN_FILENO)) {
-            perror("Could not set up input pipe");
-            exit(EXIT_FAILURE);
-        }
+            /* Set STDIN to the read end */
+            if (-1 == dup2(arduino_in[0], STDIN_FILENO)) {
+                perror("Could not set up input pipe");
+                exit(EXIT_FAILURE);
+            }
 
-        /* Set up the STDOUT pipe */
-        close(arduino_out[0]);  /* Close the read end */
+            /* Set up the STDOUT pipe */
+            close(arduino_out[0]);  /* Close the read end */
 
-        /* Set STDOUT to the write end */
-        if (-1 == dup2(arduino_out[1], STDOUT_FILENO)) {
-            perror("Could not set up output pipe");
-            exit(EXIT_FAILURE);
+            /* Set STDOUT to the write end */
+            if (-1 == dup2(arduino_out[1], STDOUT_FILENO)) {
+                perror("Could not set up output pipe");
+                exit(EXIT_FAILURE);
+            }
         }
 
         /* Run the Arduino stuff */
@@ -104,7 +111,7 @@ int main(int argc, char *argv[]) {
     /* Can't have buffered stdout, it ruins stuff! */
     setvbuf(stdout, NULL, _IONBF, 0);
 
-    /* Child process - set up Arduino server */
+    /* Parent process - set up Arduino server */
     ArduinoMega mega(arduino_in[1], arduino_out[0]);
 
     /* Set up a PTTY so we can connect to our Arduino! */
@@ -120,7 +127,7 @@ int main(int argc, char *argv[]) {
         perror("Could not set mode or ownership of pty");
         exit(EXIT_FAILURE);
     }
-
+    
     /* Unlock the slave pty */
     if (-1 == unlockpt(master)) {
         perror("Could not get slave pty");
