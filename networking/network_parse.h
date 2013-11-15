@@ -34,7 +34,7 @@ typedef struct PinConnection {
 
     uint8_t out_pin;
     uint8_t in_pin;
-} ArduinoPinConnection;
+} PinConnection;
 
 
 typedef struct SerialConnection {
@@ -48,9 +48,19 @@ typedef struct SerialConnection {
 
 typedef struct ArduinoNetwork {
     char **names;  /* Names of the Arduinos corresponding to the given index */
+    char **paths;  /* Path to the executable for an Arduino at a given index */
+    size_t num_arduinos;
 
     SerialConnection *serial_ports;
+    size_t num_serial;
+
     PinConnection *pins;
+    size_t num_pins;
 } ArduinoNetwork;
+
+
+/* Returned struct contains malloc'd memory */
+ArduinoNetwork parse_network(FILE *ard_file);
+void free_network(ArduinoNetwork *network);
 
 #endif
