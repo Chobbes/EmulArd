@@ -64,5 +64,6 @@ typedef struct ArduinoNetwork {
 /* Returned struct contains malloc'd memory */
 ArduinoNetwork parse_network(FILE *ard_file);
 void free_network(ArduinoNetwork *network);
+void print_network(ArduinoNetwork *network);
 
 #endif
