@@ -384,4 +384,6 @@ void print_network(ArduinoNetwork *network)
         printf("%s serial %d to %s serial %d\n", network->names[con.out_index], con.out_port,
                network->names[con.in_index], con.in_port);
     }
+
+    printf("\n");
 }
