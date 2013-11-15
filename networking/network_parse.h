@@ -25,7 +25,9 @@
 #ifndef NETWORK_PARSE_H
 #define NETWORK_PARSE_H
 
+#include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 
 typedef struct PinConnection {
