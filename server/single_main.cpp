@@ -26,6 +26,7 @@
 #include "fakeduino.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/select.h>
@@ -40,6 +41,13 @@ void loop();
 
 
 int main(int argc, char *argv[]) {
+    int client_mode = 0;
+
+    if (argc > 1 && 0 == strcmp(argv[1], "-c")) {
+        /* Run in client mode */
+        client_mode = 1;
+    }
+
     int arduino_in[2];  /* Arduino STDIN pipe */
     int arduino_out[2];  /* Arduino STDOUT pipe */
 
@@ -54,7 +62,11 @@ int main(int argc, char *argv[]) {
     }
 
 
-    pid_t pid = fork();
+    pid_t pid = 0;
+
+    if (!client_mode) {
+        pid = fork();
+    }
 
     if (pid == 0) {
         /* Parent process - run the Arduino stuff */
