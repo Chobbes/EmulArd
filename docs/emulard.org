@@ -141,9 +141,9 @@
    analog pin 0 is actually pin 54.
 
 *** Declarations
-     The initialization section consists of entries of the form
+     The declaration section consists of entries of the form
 
-     : <NAME> : <PATH> ;
+     : d <NAME> : <PATH>
 
      Where name is a _unique_ identifier for the Arduino, and path is
      the path to the desired executable file for the Arduino
@@ -156,17 +156,16 @@
 
     Pin connections are unidirectional and are made like
 
-    : <NAME> : <PIN> -> <NAME> : <PIN> ;
+    : p <NAME> : <PIN> <NAME> : <PIN>
 
     In this case the first Arduino's pin is an output which connects
-    to the second Arduino's input pin. '<PIN>' is anything of the form
-    'p<integer>'.
+    to the second Arduino's input pin. '<PIN>' is an integer value.
 
-    : <NAME> : <PORT> -- <NAME> : <PORT> ;
+    : s <NAME> : <PORT> <NAME> : <PORT>
 
     Is a bidirectional serial connection between the two Arduinos
-    where '<PORT>' is anything of the form 's<integer>', and
-    represents one of the serial ports on the Arduino.
+    where '<PORT>' is just an integer, and represents one of the
+    serial ports on the Arduino.
 
 *** Comments
     The .ard files support line comments, and ignores all
