@@ -143,7 +143,7 @@
 *** Declarations
      The declaration section consists of entries of the form
 
-     : d <NAME> : <PATH>
+     : d <NAME>:<PATH>
 
      Where name is a _unique_ identifier for the Arduino, and path is
      the path to the desired executable file for the Arduino
@@ -156,12 +156,12 @@
 
     Pin connections are unidirectional and are made like
 
-    : p <NAME> : <PIN> <NAME> : <PIN>
+    : p <NAME>:<PIN> <NAME>:<PIN>
 
     In this case the first Arduino's pin is an output which connects
     to the second Arduino's input pin. '<PIN>' is an integer value.
 
-    : s <NAME> : <PORT> <NAME> : <PORT>
+    : s <NAME>:<PORT> <NAME>:<PORT>
 
     Is a bidirectional serial connection between the two Arduinos
     where '<PORT>' is just an integer, and represents one of the
