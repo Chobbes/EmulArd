@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
                     for (int j = 0; j < network.num_serial; ++j) {
                         SerialConnection con = network.serial_ports[j];
                         
-                        if (con.in_index == i && con.in_port == 0) {
+                        if (con.in_index == i && con.in_port == 1) {
                             int out = con.out_index;
                             
                             switch (con.out_port) {
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
                                 break;
                             }
                         }
-                        else if (con.out_index == i && con.out_port == 0) {
+                        else if (con.out_index == i && con.out_port == 1) {
                             int in = con.in_index;
 
                             switch (con.in_port) {
@@ -321,7 +321,7 @@ int main(int argc, char *argv[])
                     for (int j = 0; j < network.num_serial; ++j) {
                         SerialConnection con = network.serial_ports[j];
                         
-                        if (con.in_index == i && con.in_port == 0) {
+                        if (con.in_index == i && con.in_port == 2) {
                             int out = con.out_index;
                             
                             switch (con.out_port) {
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
                                 break;
                             }
                         }
-                        else if (con.out_index == i && con.out_port == 0) {
+                        else if (con.out_index == i && con.out_port == 2) {
                             int in = con.in_index;
 
                             switch (con.in_port) {
@@ -367,7 +367,7 @@ int main(int argc, char *argv[])
                     for (int j = 0; j < network.num_serial; ++j) {
                         SerialConnection con = network.serial_ports[j];
                         
-                        if (con.in_index == i && con.in_port == 0) {
+                        if (con.in_index == i && con.in_port == 3) {
                             int out = con.out_index;
                             
                             switch (con.out_port) {
@@ -385,7 +385,7 @@ int main(int argc, char *argv[])
                                 break;
                             }
                         }
-                        else if (con.out_index == i && con.out_port == 0) {
+                        else if (con.out_index == i && con.out_port == 3) {
                             int in = con.in_index;
 
                             switch (con.in_port) {
@@ -406,6 +406,15 @@ int main(int argc, char *argv[])
                     }
                 }
             }
+        }
+
+        /* Something happened, so we should try to map all of the pins */
+        for (int i = 0; i < network.num_pins; ++i) {
+            PinConnection con = network.pins[i];
+            int pin_value = arduinos[con.out_index]->pins[con.out_pin];
+
+            /* Write to the input pin */
+            arduinos[con.in_index]->pins[con.in_pin] = pin_value;
         }
     }
 
