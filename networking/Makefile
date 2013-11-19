@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+CXXFLAGS += -g
 
 arduino_net : network_arduinos.o network_parse.o
 	$(CXX) $^ -o $@ -lemulard -lemulardprotocol
