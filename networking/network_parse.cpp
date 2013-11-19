@@ -186,7 +186,7 @@ static int parse_declaration(FILE *ard_file, ArduinoNetwork *network)
     char *path = parse_identifier(ard_file);
 
     network->names = (char **)realloc(network->names, sizeof(network->names[0]) * (network->num_arduinos + 1));
-    network->paths = (char **)realloc(network->paths, sizeof(network->paths[0]) * network->num_arduinos);
+    network->paths = (char **)realloc(network->paths, sizeof(network->paths[0]) * (network->num_arduinos + 1));
 
     network->names[network->num_arduinos] = name;
     network->paths[network->num_arduinos] = path;
