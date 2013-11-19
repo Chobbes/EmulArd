@@ -185,8 +185,8 @@ static int parse_declaration(FILE *ard_file, ArduinoNetwork *network)
     skip_aesthetics(ard_file);
     char *path = parse_identifier(ard_file);
 
-    network->names = (char **)realloc(network->names, network->num_arduinos + sizeof(network->names[0]));
-    network->paths = (char **)realloc(network->paths, network->num_arduinos + sizeof(network->paths[0]));
+    network->names = (char **)realloc(network->names, sizeof(network->names[0]) * (network->num_arduinos + 1));
+    network->paths = (char **)realloc(network->paths, sizeof(network->paths[0]) * network->num_arduinos);
 
     network->names[network->num_arduinos] = name;
     network->paths[network->num_arduinos] = path;
@@ -197,7 +197,7 @@ static int parse_declaration(FILE *ard_file, ArduinoNetwork *network)
 }
 
 
-static int arduino_lookup(char *name, ArduinoNetwork *network)
+static int arduino_lookup(const char *name, ArduinoNetwork *network)
 {
     for (int i = 0; i < network->num_arduinos; ++i) {
         if (0 == strcmp(name, network->names[i])) {
@@ -238,7 +238,7 @@ static int parse_pin(FILE *ard_file, ArduinoNetwork *network)
     free(in_name);
 
     /* Add the connection to the network */
-    network->pins = (PinConnection *)realloc(network->pins, network->num_pins + sizeof(network->pins[0]));
+    network->pins = (PinConnection *)realloc(network->pins, sizeof(network->pins[0]) * (network->num_pins + 1));
     network->pins[network->num_pins] = connection;
 
     ++network->num_pins;
@@ -276,7 +276,7 @@ static int parse_serial(FILE *ard_file, ArduinoNetwork *network)
     free(in_name);
 
     /* Add the connection to the network */
-    network->serial_ports = (SerialConnection *) realloc(network->serial_ports, network->num_serial + sizeof(network->serial_ports[0]));
+    network->serial_ports = (SerialConnection *) realloc(network->serial_ports, sizeof(network->serial_ports[0]) * (network->num_serial + 1));
     network->serial_ports[network->num_serial] = connection;
 
     ++network->num_serial;
