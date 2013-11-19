@@ -418,5 +418,6 @@ int main(int argc, char *argv[])
         }
     }
 
+    free_network(&network);
     return 0;
 }
