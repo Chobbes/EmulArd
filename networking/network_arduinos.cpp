@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/select.h>
-
+#include <time.h>
 
 pid_t launch_arduino(char *name, char *path, int *in_pipe, int *out_pipe) {
     if (-1 == pipe(in_pipe)) {
@@ -155,6 +155,9 @@ int main(int argc, char *argv[])
             perror("Could not get slave pty");
             exit(EXIT_FAILURE);
         }
+
+        int flags = fcntl(master, F_GETFL);
+        fcntl(master, F_SETFL, flags | O_NONBLOCK);
 
         /* Now we want to get the device name for the slave pty */
         char *slave_name = ptsname(master);
