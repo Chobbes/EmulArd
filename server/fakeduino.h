@@ -304,9 +304,7 @@ class ArduinoMega {
         uint8_t pin = receive_char(from_arduino);
         int value = receive_int(from_arduino);
 
-        if (pin >= 0 && pin < 16) {
-            pins[pin + 54] = value;
-        }
+        pins[pin] = value;
     }
 
     void analog_read() {
