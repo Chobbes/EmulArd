@@ -166,14 +166,14 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_FAILURE);
             }
 
-            mega.serial_in.append(input);
+            mega.serial_in[0].append(input);
         }
 
         if (FD_ISSET(mega.from_arduino, &read_set)) {
             mega.run();
 
-            if (mega.serial_out.available()) {
-                char output = mega.serial_out.read();
+            if (mega.serial_out[0].available()) {
+                char output = mega.serial_out[0].read();
                 write(master, &output, sizeof(output));
             }
         }
