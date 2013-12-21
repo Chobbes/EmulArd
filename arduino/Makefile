@@ -28,7 +28,7 @@ INSTALL_DIR = /usr/local/lib
 HEADER_DIR = /usr/local/include
 
 # Need commands.h
-CXXFLAGS += -I../protocol/
+CXXFLAGS += -I../protocol/ -g
 
 libemulard.a : Arduino.o
 	ar -cvq $@ $^
