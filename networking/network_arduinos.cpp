@@ -34,7 +34,8 @@
 #include <sys/select.h>
 #include <time.h>
 
-pid_t launch_arduino(char *name, char *path, int *in_pipe, int *out_pipe) {
+pid_t launch_arduino(char *name, char *path, int *in_pipe, int *out_pipe)
+{
     if (-1 == pipe(in_pipe)) {
         perror("Could not create input pipe");
         exit(EXIT_FAILURE);
