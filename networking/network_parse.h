@@ -48,6 +48,8 @@ typedef struct SerialConnection {
 } SerialConnection;
 
 
+/* Currently we do not include the actual Arduinos here -- there may
+   be many different kinds of Arduinos */
 typedef struct ArduinoNetwork {
     char **names;  /* Names of the Arduinos corresponding to the given index */
     char **paths;  /* Path to the executable for an Arduino at a given index */
