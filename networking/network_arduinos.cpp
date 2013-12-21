@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
                     exit(EXIT_FAILURE);
                 }
 
-                arduinos[i]->serial_in[0].append(input);
+                arduinos[i]->serial_in[0]->append(input);
             }
         }
 
@@ -224,9 +224,9 @@ int main(int argc, char *argv[])
                 arduinos[i]->run();
 
                 /* 4 is the number of ports on a mega */
-                for (int port = 0; i < 4; ++port) {
-                    if (arduinos[i]->serial_out[port].available()) {
-                        char output = arduinos[i]->serial_out[port].read();
+                for (int port = 0; port < 4; ++port) {
+                    if (arduinos[i]->serial_out[port]->available()) {
+                        char output = arduinos[i]->serial_out[port]->read();
 
                         if (port == 0) {
                             /* Write to pseudo TTY */
@@ -240,12 +240,12 @@ int main(int argc, char *argv[])
                             if (con.in_index == i && con.in_port == 0) {
                                 int out = con.out_index;
 
-                                arduinos[out]->serial_in[con.out_port].append(output);
+                                arduinos[out]->serial_in[con.out_port]->append(output);
                             }
                             else if (con.out_index == i && con.out_port == 0) {
                                 int in = con.in_index;
 
-                                arduinos[in]->serial_in[con.in_port].append(output);
+                                arduinos[in]->serial_in[con.in_port]->append(output);
                             }
                         }
                     }
