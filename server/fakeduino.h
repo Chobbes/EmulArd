@@ -22,6 +22,9 @@
 
 */
 
+#ifndef FAKEDUINO_H
+#define FAKEDUINO_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -252,3 +255,5 @@ class ArduinoMega {
         }
     }
 };
+
+#endif
