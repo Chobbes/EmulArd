@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
                     exit(EXIT_FAILURE);
                 }
 
-                arduinos[i]->serial_in.append(input);
+                arduinos[i]->serial_in[0].append(input);
             }
         }
 
@@ -222,188 +222,29 @@ int main(int argc, char *argv[])
             if (FD_ISSET(arduinos[i]->from_arduino, &read_set)) {
                 arduinos[i]->run();
 
-                if (arduinos[i]->serial_out.available()) {
-                    char output = arduinos[i]->serial_out.read();
+                /* 4 is the number of ports on a mega */
+                for (int port = 0; i < 4; ++port) {
+                    if (arduinos[i]->serial_out[port].available()) {
+                        char output = arduinos[i]->serial_out[port].read();
 
-                    /* Write to pseudo TTY */
-                    write(tty_masters[i], &output, sizeof(output));
+                        if (port == 0) {
+                            /* Write to pseudo TTY */
+                            write(tty_masters[i], &output, sizeof(output));
+                        }
 
-                    /* Find all serial connections */
-                    for (int j = 0; j < network.num_serial; ++j) {
-                        SerialConnection con = network.serial_ports[j];
+                        /* Find all serial connections */
+                        for (int j = 0; j < network.num_serial; ++j) {
+                            SerialConnection con = network.serial_ports[j];
                         
-                        if (con.in_index == i && con.in_port == 0) {
-                            int out = con.out_index;
-                            
-                            switch (con.out_port) {
-                            case 0:
-                                arduinos[out]->serial_in.append(output);
-                                break;
-                            case 1:
-                                arduinos[out]->serial1_in.append(output);
-                                break;
-                            case 2:
-                                arduinos[out]->serial2_in.append(output);
-                                break;
-                            case 3:
-                                arduinos[out]->serial3_in.append(output);
-                                break;
+                            if (con.in_index == i && con.in_port == 0) {
+                                int out = con.out_index;
+
+                                arduinos[out]->serial_in[con.out_port].append(output);
                             }
-                        }
-                        else if (con.out_index == i && con.out_port == 0) {
-                            int in = con.in_index;
+                            else if (con.out_index == i && con.out_port == 0) {
+                                int in = con.in_index;
 
-                            switch (con.in_port) {
-                            case 0:
-                                arduinos[in]->serial_in.append(output);
-                                break;
-                            case 1:
-                                arduinos[in]->serial1_in.append(output);
-                                break;
-                            case 2:
-                                arduinos[in]->serial2_in.append(output);
-                                break;
-                            case 3:
-                                arduinos[in]->serial3_in.append(output);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (arduinos[i]->serial1_out.available()) {
-                    char output = arduinos[i]->serial1_out.read();
-
-                    /* Find all serial connections */
-                    for (int j = 0; j < network.num_serial; ++j) {
-                        SerialConnection con = network.serial_ports[j];
-                        
-                        if (con.in_index == i && con.in_port == 1) {
-                            int out = con.out_index;
-                            
-                            switch (con.out_port) {
-                            case 0:
-                                arduinos[out]->serial_in.append(output);
-                                break;
-                            case 1:
-                                arduinos[out]->serial1_in.append(output);
-                                break;
-                            case 2:
-                                arduinos[out]->serial2_in.append(output);
-                                break;
-                            case 3:
-                                arduinos[out]->serial3_in.append(output);
-                                break;
-                            }
-                        }
-                        else if (con.out_index == i && con.out_port == 1) {
-                            int in = con.in_index;
-
-                            switch (con.in_port) {
-                            case 0:
-                                arduinos[in]->serial_in.append(output);
-                                break;
-                            case 1:
-                                arduinos[in]->serial1_in.append(output);
-                                break;
-                            case 2:
-                                arduinos[in]->serial2_in.append(output);
-                                break;
-                            case 3:
-                                arduinos[in]->serial3_in.append(output);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (arduinos[i]->serial2_out.available()) {
-                    char output = arduinos[i]->serial2_out.read();
-
-                    /* Find all serial connections */
-                    for (int j = 0; j < network.num_serial; ++j) {
-                        SerialConnection con = network.serial_ports[j];
-                        
-                        if (con.in_index == i && con.in_port == 2) {
-                            int out = con.out_index;
-                            
-                            switch (con.out_port) {
-                            case 0:
-                                arduinos[out]->serial_in.append(output);
-                                break;
-                            case 1:
-                                arduinos[out]->serial1_in.append(output);
-                                break;
-                            case 2:
-                                arduinos[out]->serial2_in.append(output);
-                                break;
-                            case 3:
-                                arduinos[out]->serial3_in.append(output);
-                                break;
-                            }
-                        }
-                        else if (con.out_index == i && con.out_port == 2) {
-                            int in = con.in_index;
-
-                            switch (con.in_port) {
-                            case 0:
-                                arduinos[in]->serial_in.append(output);
-                                break;
-                            case 1:
-                                arduinos[in]->serial1_in.append(output);
-                                break;
-                            case 2:
-                                arduinos[in]->serial2_in.append(output);
-                                break;
-                            case 3:
-                                arduinos[in]->serial3_in.append(output);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (arduinos[i]->serial3_out.available()) {
-                    char output = arduinos[i]->serial3_out.read();
-
-                    /* Find all serial connections */
-                    for (int j = 0; j < network.num_serial; ++j) {
-                        SerialConnection con = network.serial_ports[j];
-                        
-                        if (con.in_index == i && con.in_port == 3) {
-                            int out = con.out_index;
-                            
-                            switch (con.out_port) {
-                            case 0:
-                                arduinos[out]->serial_in.append(output);
-                                break;
-                            case 1:
-                                arduinos[out]->serial1_in.append(output);
-                                break;
-                            case 2:
-                                arduinos[out]->serial2_in.append(output);
-                                break;
-                            case 3:
-                                arduinos[out]->serial3_in.append(output);
-                                break;
-                            }
-                        }
-                        else if (con.out_index == i && con.out_port == 3) {
-                            int in = con.in_index;
-
-                            switch (con.in_port) {
-                            case 0:
-                                arduinos[in]->serial_in.append(output);
-                                break;
-                            case 1:
-                                arduinos[in]->serial1_in.append(output);
-                                break;
-                            case 2:
-                                arduinos[in]->serial2_in.append(output);
-                                break;
-                            case 3:
-                                arduinos[in]->serial3_in.append(output);
-                                break;
+                                arduinos[in]->serial_in[con.in_port].append(output);
                             }
                         }
                     }
