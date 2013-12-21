@@ -118,7 +118,7 @@ class ArduinoMega {
     }
 
     /* May be none-blocking */
-    void run() {
+    uint8_t run() {
         /* Read command for dispatching */
         uint8_t command = receive_char(from_arduino);
 
@@ -159,6 +159,8 @@ class ArduinoMega {
                 break;
             }
         }
+
+        return command;
     }
 
     void serial_begin() {
