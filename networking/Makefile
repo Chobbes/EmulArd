@@ -22,10 +22,13 @@
 
 CXXFLAGS += -g
 
-arduino_net : network_arduinos.o network_parse.o
+arduino_net : network_arduinos.o network_parse.o network_utilities.o
 	$(CXX) $^ -o $@ -lemulard -lemulardprotocol
 
 network_arduinos.o : network_arduinos.cpp network_parse.h
+	$(CXX) -c $< $(CXXFLAGS)
+
+network_utilities.o : network_utilities.cpp network_utilities.h network_parse.h
 	$(CXX) -c $< $(CXXFLAGS)
 
 network_parse.o : network_parse.cpp network_parse.h
