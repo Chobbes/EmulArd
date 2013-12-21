@@ -96,8 +96,8 @@ class ArduinoMega {
     uint8_t pin_modes[70];
 
     /* Serial buffers for the different ports */
-    SerialBuffer serial_out[4];
-    SerialBuffer serial_in[4];
+    SerialBuffer *serial_out[4];
+    SerialBuffer *serial_in[4];
     unsigned long serial_baud[4];
 
     /* Pipes for talking to the Arduino process */
@@ -107,6 +107,11 @@ class ArduinoMega {
     ArduinoMega(int to, int from) {
         this->to_arduino = to;
         this->from_arduino = from;
+
+        for (int port = 0; port < 4; ++port) {
+            serial_out[port] = new SerialBuffer();
+            serial_in[port] = new SerialBuffer();
+        }
     }
 
     /* May be none-blocking */
@@ -166,14 +171,14 @@ class ArduinoMega {
         unsigned int port = receive_int(from_arduino);
         char value = receive_char(from_arduino);
 
-        serial_out[port].append(value);
+        serial_out[port]->append(value);
     }
 
     void serial_read() {
         unsigned int port = receive_int(from_arduino);
         int value = -1;
 
-        value = serial_in[port].read();
+        value = serial_in[port]->read();
         FD_SEND(to_arduino, value);
     }
 
@@ -181,7 +186,7 @@ class ArduinoMega {
         unsigned int port = receive_int(from_arduino);
         int value = -1;
 
-        value = serial_in[port].peek();
+        value = serial_in[port]->peek();
         FD_SEND(to_arduino, value);
     }
 
@@ -189,7 +194,7 @@ class ArduinoMega {
         unsigned int port = receive_int(from_arduino);
         int available = -1;
 
-        available = serial_in[port].available();
+        available = serial_in[port]->available();
         FD_SEND(to_arduino, available);
     }
 
