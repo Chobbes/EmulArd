@@ -22,6 +22,7 @@
 
 */
 
+#include "network_parse.h"
 
 /*
   Function to write a .dot file containing network information.
@@ -31,6 +32,8 @@
   name: Name of the graph in output .dot file.
   network: Arduino network that we want a graph for.
   arduinos: An array of all of the Arduinos in the network.
+
+  For digital pins black is a LOW value, and red is a HIGH value.
  */
 
 void write_graph(const char *path, const char *name, ArduinoNetwork *network, ArduinoMega **arduinos);
