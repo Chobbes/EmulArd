@@ -96,21 +96,9 @@ class ArduinoMega {
     uint8_t pin_modes[70];
 
     /* Serial buffers for the different ports */
-    SerialBuffer serial_out;
-    SerialBuffer serial_in;
-    unsigned long serial_baud;
-    
-    SerialBuffer serial1_out;
-    SerialBuffer serial1_in;
-    unsigned long serial1_baud;
-
-    SerialBuffer serial2_out;
-    SerialBuffer serial2_in;
-    unsigned long serial2_baud;
-
-    SerialBuffer serial3_out;
-    SerialBuffer serial3_in;
-    unsigned long serial3_baud;
+    SerialBuffer serial_out[4];
+    SerialBuffer serial_in[4];
+    unsigned long serial_baud[4];
 
     /* Pipes for talking to the Arduino process */
     int to_arduino;
@@ -171,61 +159,21 @@ class ArduinoMega {
 
         printf("Port: %u  --  Baud: %lu\n", port, baud_rate);
 
-        switch (port) {
-        case 0:
-            serial_baud = baud_rate;
-            break;
-        case 1:
-            serial1_baud = baud_rate;
-            break;
-        case 2:
-            serial2_baud = baud_rate;
-            break;
-        case 3:
-            serial3_baud = baud_rate;
-            break;
-        }
+        serial_baud[port] = baud_rate;
     }
 
     void serial_write() {
         unsigned int port = receive_int(from_arduino);
         char value = receive_char(from_arduino);
 
-        switch (port) {
-        case 0:
-            serial_out.append(value);
-            break;
-        case 1:
-            serial1_out.append(value);
-            break;
-        case 2:
-            serial2_out.append(value);
-            break;
-        case 3:
-            serial3_out.append(value);
-            break;
-        }
+        serial_out[port].append(value);
     }
 
     void serial_read() {
         unsigned int port = receive_int(from_arduino);
         int value = -1;
 
-        switch (port) {
-        case 0:
-            value = serial_in.read();
-            break;
-        case 1:
-            value = serial1_in.read();
-            break;
-        case 2:
-            value = serial2_in.read();
-            break;
-        case 3:
-            value = serial3_in.read();
-            break;
-        }
-
+        value = serial_in[port].read();
         FD_SEND(to_arduino, value);
     }
 
@@ -233,21 +181,7 @@ class ArduinoMega {
         unsigned int port = receive_int(from_arduino);
         int value = -1;
 
-        switch (port) {
-        case 0:
-            value = serial_in.peek();
-            break;
-        case 1:
-            value = serial1_in.peek();
-            break;
-        case 2:
-            value = serial2_in.peek();
-            break;
-        case 3:
-            value = serial3_in.peek();
-            break;
-        }
-
+        value = serial_in[port].peek();
         FD_SEND(to_arduino, value);
     }
 
@@ -255,21 +189,7 @@ class ArduinoMega {
         unsigned int port = receive_int(from_arduino);
         int available = -1;
 
-        switch (port) {
-        case 0:
-            available = serial_in.available();
-            break;
-        case 1:
-            available = serial1_in.available();
-            break;
-        case 2:
-            available = serial2_in.available();
-            break;
-        case 3:
-            available = serial3_in.available();
-            break;
-        }
-
+        available = serial_in[port].available();
         FD_SEND(to_arduino, available);
     }
 
