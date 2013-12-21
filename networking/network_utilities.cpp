@@ -48,7 +48,7 @@ void write_graph(const char *path, const char *name, ArduinoNetwork *network, Ar
         ArduinoMega *in_arduino = arduinos[con.in_index];
         char *in_name = network->names[con.in_index];
 
-        if (out_arduino.pins[con.out_pin]) {
+        if (out_arduino->pins[con.out_pin]) {
             /* HIGH value on pin */
             fprintf(file, "%s -> %s", in_name, out_name);
             fprintf(file, " [label=\" %d->%d\" ", con.out_pin, con.in_pin);
@@ -60,6 +60,13 @@ void write_graph(const char *path, const char *name, ArduinoNetwork *network, Ar
             fprintf(file, " [label=\" %d->%d\" ", con.out_pin, con.in_pin);
             fprintf(file, "color=red];\n");
         }
+    }
+
+    fprintf(file, "\n");
+
+    /* Create all of the serial connections */
+    for (int i = 0; i < network->num_serial; ++i) {
+
     }
 
     fprintf(file, ";\n}\n");
