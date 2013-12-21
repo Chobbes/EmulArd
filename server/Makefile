@@ -22,7 +22,7 @@
 
 
 # Need commands.h and Arduino.h
-CXXFLAGS += -I../protocol/ -I../arduino/
+CXXFLAGS += -I../protocol/ -I../arduino/ -g
 
 # Install directory for header files.
 HEADER_DIR = /usr/local/include/emulard
