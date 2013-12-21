@@ -26,6 +26,7 @@
 #define NETWORK_UTILITIES_H
 
 #include "network_parse.h"
+#include <emulard/fakeduino.h>
 
 /*
   Function to write a .dot file containing network information.
@@ -36,7 +37,9 @@
   network: Arduino network that we want a graph for.
   arduinos: An array of all of the Arduinos in the network.
 
-  For digital pins black is a LOW value, and red is a HIGH value.
+  For digital pins black is a LOW value, and red is a HIGH
+  value. Serial connections are blue edges, so it's easy to
+  differentiate between them and the digital pins.
  */
 
 void write_graph(const char *path, const char *name, ArduinoNetwork *network, ArduinoMega **arduinos);
