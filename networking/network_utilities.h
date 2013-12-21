@@ -22,6 +22,9 @@
 
 */
 
+#ifndef NETWORK_UTILITIES_H
+#define NETWORK_UTILITIES_H
+
 #include "network_parse.h"
 
 /*
@@ -37,3 +40,5 @@
  */
 
 void write_graph(const char *path, const char *name, ArduinoNetwork *network, ArduinoMega **arduinos);
+
+#endif
