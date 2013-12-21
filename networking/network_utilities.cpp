@@ -50,19 +50,15 @@ void write_graph(const char *path, const char *name, ArduinoNetwork *network, Ar
 
         if (out_arduino.pins[con.out_pin]) {
             /* HIGH value on pin */
-            fprintf(file, "%s -> %s [label=\" %d->%d\" color=red];\n",
-                    in_name,
-                    out_name,
-                    con.out_pin,
-                    con.in_pin);
+            fprintf(file, "%s -> %s", in_name, out_name);
+            fprintf(file, " [label=\" %d->%d\" ", con.out_pin, con.in_pin);
+            fprintf(file, "color=red];\n");
         }
         else {
             /* LOW value on pin */
-            fprintf(file, "%s -> %s [label=\" %d->%d\" color=black];\n",
-                    in_name,
-                    out_name,
-                    con.out_pin,
-                    con.in_pin);
+            fprintf(file, "%s -> %s", in_name, out_name);
+            fprintf(file, " [label=\" %d->%d\" ", con.out_pin, con.in_pin);
+            fprintf(file, "color=red];\n");
         }
     }
 
