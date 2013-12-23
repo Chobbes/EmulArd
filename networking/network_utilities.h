@@ -28,6 +28,7 @@
 #include "network_parse.h"
 #include <emulard/fakeduino.h>
 
+
 /*
   Function to write a .dot file containing network information.
 
@@ -36,12 +37,15 @@
   name: Name of the graph in output .dot file.
   network: Arduino network that we want a graph for.
   arduinos: An array of all of the Arduinos in the network.
+  node_print: NULL, or a function for how to print an Arduino
+              node in the dot file.
 
   For digital pins black is a LOW value, and red is a HIGH
   value. Serial connections are blue edges, so it's easy to
   differentiate between them and the digital pins.
  */
 
-void write_graph(const char *path, const char *name, ArduinoNetwork *network, ArduinoMega **arduinos);
+void write_graph(const char *path, const char *name, ArduinoNetwork *network, ArduinoMega **arduinos, void (*node_print)(FILE*, ArduinoNetwork*, ArduinoMega*, int));
+
 
 #endif
