@@ -25,7 +25,7 @@
 #include "network_utilities.h"
 
 
-void write_graph(const char *path, const char *name, ArduinoNetwork *network, ArduinoMega **arduinos)
+void write_graph(const char *path, const char *name, ArduinoNetwork *network, ArduinoMega **arduinos, void (*node_print)(FILE*, ArduinoNetwork*, ArduinoMega*, int))
 {
     FILE *file = fopen(path, "w");
 
@@ -33,7 +33,12 @@ void write_graph(const char *path, const char *name, ArduinoNetwork *network, Ar
 
     /* Declare the nodes */
     for (int i = 0; i < network->num_arduinos; ++i) {
-        fprintf(file, "    %s;\n", network->names[i]);
+        if (NULL == node_print) {
+            fprintf(file, "    %s;\n", network->names[i]);
+        }
+        else {
+            node_print(file, network, arduinos[i], i);
+        }
     }
 
     fprintf(file, "\n");
