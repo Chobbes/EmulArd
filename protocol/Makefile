@@ -25,7 +25,7 @@
 INSTALL_DIR = /usr/local/lib
 
 # Install directory for header files.
-HEADER_DIR = /usr/local/include/emulard
+HEADER_DIR = /usr/local/include/emulard/protocol
 
 libemulardprotocol.a : commands.o
 	ar -cvq $@ $^
