@@ -25,7 +25,7 @@
 CXXFLAGS += -I../protocol/ -I../arduino/ -g
 
 # Install directory for header files.
-HEADER_DIR = /usr/local/include/emulard
+HEADER_DIR = /usr/local/include/emulard/server
 
 single_main.o : single_main.cpp fakeduino.h
 	$(CXX) -c $< $(CXXFLAGS)
