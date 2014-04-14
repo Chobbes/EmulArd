@@ -16,3 +16,5 @@
   And here is a video of the same algorithm running on a bunch of Ardweenys (small Arduinos). The red LEDs represent their current orientation:
   
   [[https://drive.google.com/file/d/0B7gkTa_5zv8RWFRxdjdZYm5ybTQ/edit?usp=sharing][Real Arduino network!]]
+
+  While testing on actual hardware is nice, and is certainly valuable, the ability to simulate the exact same behaviour is quite useful as well. Wiring up a lot of Arduinos in a network for testing can be impractical and time consuming, especially if you want to test a variety of different topologies. You can't easily see the values of all of the connections without expensive logic analyzers, whereas with EmulArd you can easily view all of the connections and even automatically point out when something goes wrong and print more debugging information. Furthermore, with something like EmulArd you can very easily write a bunch of automated unit tests for your programs, and you can even write tests for how your programs interract in a network of arbitrary topology!
