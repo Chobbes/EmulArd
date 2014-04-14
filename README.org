@@ -8,3 +8,11 @@
 
   This framework will also allow for creating networks of fake
   Arduinos.
+
+  Here's a video of a network of fake Arduinos running a ring orientation algorithm. Each Arduino tries to figure out which neighbours are to the "left" and "right" consistently. The colour is the orientation, and the edges are the connections between the digital pins on the Arduino (red edges are HIGH, black edges are LOW):
+  
+  [[https://drive.google.com/file/d/0B7gkTa_5zv8RMXNCbEpUaGVMZUk/edit?usp=sharing][Fake Arduino network!]]
+  
+  And here is a video of the same algorithm running on a bunch of Ardweenys (small Arduinos). The red LEDs represent their current orientation:
+  
+  [[https://drive.google.com/file/d/0B7gkTa_5zv8RWFRxdjdZYm5ybTQ/edit?usp=sharing][Real Arduino network!]]
